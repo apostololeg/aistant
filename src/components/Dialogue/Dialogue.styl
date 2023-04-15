@@ -1,0 +1,60 @@
+.root
+  display flex
+  flex-direction column
+  height calc(100 * var(--vh))
+
+.messages
+  flex-grow 1
+
+.message
+  padding var(--indent-m)
+
+  & + &
+    margin-top var(--indent-m)
+
+  &.user
+    background-color var(--accent-color-alpha-100)
+
+.prompt
+  position relative
+  width 100%
+  padding var(--indent-m)
+
+  &::before
+    content ''
+    position absolute
+    bottom 100%
+    left 0
+    width 100%
+    height 50px
+    background-image linear-gradient(to top, var(--decent-color), transparent)
+    pointer-events none
+
+
+.promptInput
+.promptInput > label
+  width 100%
+
+.promptButtonsPlaceholder
+  width 100px
+  popinter-events none
+
+.promptButtons
+  z-index 1
+  position absolute
+  right 33px
+  bottom 24px
+  transform scale(1.1)
+
+  display flex
+  flex-shrink 0
+  margin-right -7px
+
+  & button
+    background-color transparent !important
+
+    &:hover
+      color var(--active-color)
+
+    & + &
+      margin-left 5px
