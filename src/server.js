@@ -1,18 +1,21 @@
 import dotenv from 'dotenv';
-
 import express from 'express';
 // import multer from 'multer';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
 // import { Readable } from 'stream';
 
-const { OPENAI_API_KEY } = dotenv.config().parsed;
+const envs = dotenv.config().parsed;
+
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || envs.PORT;
 // const upload = multer({ storage: multer.memoryStorage() });
 
-const configuration = new Configuration({ apiKey: OPENAI_API_KEY });
-const openai = new OpenAIApi(configuration);
+const apiByKey = new Map();
+
+const api = key =>
+  apiByKey.get(key) ||
+  apiByKey.set(key, new OpenAIApi(new Configuration({ apiKey: key }))).get(key);
 
 app.use(cors());
 app.use(express.json());
@@ -43,8 +46,8 @@ app.use(express.json());
 
 app.post('/api/gpt', async (req, res) => {
   try {
-    console.log(req.body);
-    const completion = await openai.createChatCompletion(req.body);
+    const { apiKey, ...params } = req.body;
+    const completion = await api(apiKey).createChatCompletion(params);
     const { choices, usage } = completion.data;
 
     res.json({

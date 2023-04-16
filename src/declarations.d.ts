@@ -3,5 +3,6 @@ declare module '*.jpg';
 declare module 'uilib';
 declare module 'uilib/*';
 
-declare var OPENAI_API_KEY: string;
+declare var DOMAIN: string;
+declare var PORT: string;
 declare var webkitSpeechRecognition: any;

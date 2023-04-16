@@ -1,6 +1,7 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
+import dotenv from 'dotenv';
 import webpack from 'webpack';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
@@ -12,6 +13,7 @@ import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 import paths from './paths.js';
 
+const { parsed: envs } = dotenv.config();
 const pkg = require('../package.json');
 
 export default (_env, argv) => {
@@ -146,6 +148,8 @@ export default (_env, argv) => {
       new webpack.DefinePlugin({
         isDEV: JSON.stringify(isDev),
         VERSION: JSON.stringify(pkg.version),
+        DOMAIN: JSON.stringify(envs.DOMAIN || 'http://localhost'),
+        PORT: JSON.stringify(envs.PORT || 4051),
       }),
 
       new CopyWebpackPlugin({
@@ -176,8 +180,7 @@ export default (_env, argv) => {
           priority: 'low',
         }),
 
-      !isDev &&
-        new FaviconsWebpackPlugin(`${paths.src}/components/CV/andrew.jpg`),
+      !isDev && new FaviconsWebpackPlugin(`${paths.assets}/logo.svg`),
 
       new HtmlWebpackPlugin({
         // lang: PAGE_LANG,
@@ -210,6 +213,13 @@ export default (_env, argv) => {
   };
 
   if (isDev) {
+    const proxyConfig = {
+      secure: false,
+      changeOrigin: true,
+      logLevel: 'debug',
+      target: `http://localhost:${envs.PORT}`,
+    };
+
     Object.assign(config, {
       devtool: 'source-map',
       devServer: {
@@ -220,9 +230,9 @@ export default (_env, argv) => {
         devMiddleware: {
           writeToDisk: true,
         },
-        // proxy: {
-        //   '/api': 'http://localhost:3003',
-        // },
+        proxy: {
+          '/api': proxyConfig,
+        },
       },
     });
   }

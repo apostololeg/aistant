@@ -1,22 +1,19 @@
-import { useMemo } from 'react';
 import { withStore } from 'justorm/react';
 import { Select } from 'uilib';
 
-import S from './LangSelector.styl';
+const options = [
+  { id: 'en', label: 'English' },
+  { id: 'ua', label: 'Українська' },
+  { id: 'ru', label: 'Русский' },
+];
 
 export default withStore({
   i18n: 'lang',
 })(function LangSelector({ store: { i18n } }) {
-  const options = useMemo(() => [
-    { id: 'en', label: 'EN' },
-    { id: 'ua', label: 'УК' },
-    { id: 'ru', label: 'РУ' },
-  ]);
-
   return (
     <Select
-      className={S.root}
-      size="s"
+      label="Language"
+      // size="s"
       options={options}
       value={i18n.lang}
       onChange={i18n.changeLang}

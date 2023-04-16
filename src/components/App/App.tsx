@@ -1,20 +1,23 @@
-import { useState } from 'react';
-import { VH, Theme, ThemeDefaults } from 'uilib';
+import { withStore } from 'justorm/react';
+import { VH, Theme } from 'uilib';
 
+import 'tools/i18n';
 // import 'stores';
+
 import S from './App.styl';
 import Dialogue from 'components/Dialogue/Dialogue';
 
-const colors = { active: '#0f80b0' };
-const theme = ThemeDefaults.getConfig({ colors });
-
-export default function App() {
+export default withStore({ settings: 'isDarkTheme' })(function App({
+  store: {
+    settings: { currThemeConfig },
+  },
+}) {
   return (
     <div>
       <VH />
-      <Theme config={theme} />
+      <Theme config={currThemeConfig} />
 
       <Dialogue />
     </div>
   );
-}
+});

@@ -1224,10 +1224,10 @@
     regenerator-runtime "^0.13.7"
     resolve-url "^0.2.1"
 
-"@foreverido/uilib@^4.6.2":
-  version "4.6.2"
-  resolved "https://registry.yarnpkg.com/@foreverido/uilib/-/uilib-4.6.2.tgz#2dfce5660fd27615bbc2614a1f936573735b2037"
-  integrity sha512-x2A8DGnRx1rLlMRValKTW6NPgYrgpbfh5cOhU5u+ed2OhSDgQW5BRx7WNKWazHp9D+6+MOFG8O7SDeIaHhOIHQ==
+"@foreverido/uilib@^4.6.5":
+  version "4.6.5"
+  resolved "https://registry.yarnpkg.com/@foreverido/uilib/-/uilib-4.6.5.tgz#3d2bc7c0e719eddefc75f6e93d4b199a04344760"
+  integrity sha512-+z7ViCrII+vyzqIcgMvHus2IQ9ky6o4fMdGr9AVt39fNIpk9XkHjpPcucXOcOQx74GbKUe3Hhzh56T/G64R4RQ==
   dependencies:
     "@pmmmwh/react-refresh-webpack-plugin" "^0.5.10"
     "@rollup/plugin-typescript" "^11.0.0"

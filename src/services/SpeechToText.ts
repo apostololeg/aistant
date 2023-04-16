@@ -59,6 +59,10 @@ export class SpeechToText {
     }
   };
 
+  setLang(lang: string = '') {
+    this.api.lang = lang;
+  }
+
   onResult = e => {
     const { onResult, onSilence } = this.props;
     const transcript = e.results[0][0].transcript;
@@ -80,7 +84,7 @@ export class SpeechToText {
 
   //   try {
   //     console.time('whisper-api-call');
-  //     const response = await fetch('http://localhost:4000/api/whisper', {
+  //     const response = await fetch(`http://localhost:${PORT}/api/whisper`, {
   //       method: 'POST',
   //       headers: {
   //         Authorization: `Bearer ${OPENAI_API_KEY}`,

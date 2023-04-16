@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import cn from 'classnames';
+import { withStore } from 'justorm/react';
 import { Button, Icon } from 'uilib';
 
 import { SpeechToText } from 'services/SpeechToText';
@@ -8,7 +9,15 @@ import S from './RequestButton.styl';
 
 let stt;
 
-export default function RequestButton({ onResult, onComplete }) {
+export default withStore({
+  settings: ['voiceLang'],
+})(function RequestButton({
+  onResult,
+  onComplete,
+  store: {
+    settings: { voiceLang },
+  },
+}) {
   const [isListening, setIsListening] = useState(false);
 
   const onSilence = () => {
@@ -26,7 +35,12 @@ export default function RequestButton({ onResult, onComplete }) {
     });
   }, []);
 
+  useEffect(() => {
+    stt.setLang(voiceLang);
+  }, [voiceLang]);
+
   const toggle = () => {
+    speechSynthesis.cancel();
     stt.toggle();
     setIsListening(stt.inProgress);
   };
@@ -40,4 +54,4 @@ export default function RequestButton({ onResult, onComplete }) {
       <Icon size="l" type="mic" />
     </Button>
   );
-}
+});

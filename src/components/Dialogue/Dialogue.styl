@@ -1,13 +1,69 @@
 .root
   display flex
   flex-direction column
+  justify-content flex-end
   height calc(100 * var(--vh))
 
-.messages
-  flex-grow 1
+  & button
+    background-color transparent !important
+    animation fadeToDefaultColorOnce 1s ease-in-out
+
+    &:active
+      animation none
+
+    & + &
+      margin-left 5px
+
+
+.header
+  z-index 1
+  position absolute
+  top 0
+  left 0
+  display flex
+  align-items center
+  justify-content space-between
+  width 100%
+  padding var(--indent-m)
+  padding-bottom 50px
+  background-image linear-gradient(to bottom, var(--decent-color) 50%, transparent)
+
+.tokens
+  display flex
+  align-items center
+
+.token
+  border-radius 50%
+  width 20px
+  height 20px
+  margin-right 3px
+  animation rainbowColors 1s infinite alternate
+  transition background-image .2s ease-in-out
+  box-shadow inset 0 0 0 2px var(--decent-color-alpha-300)
+  opacity .3
+
+@keyframes rainbowColors
+  0%
+    background-image linear-gradient(0deg, yellow, orange)
+  20%
+    background-image linear-gradient(90deg, orange, red)
+  40%
+    background-image linear-gradient(180deg, red, purple)
+  60%
+    background-image linear-gradient(270deg, purple, blue)
+  80%
+    background-image linear-gradient(360deg, blue, green)
+  100%
+    background-image linear-gradient(450deg, green, yellow)
 
 .message
   padding var(--indent-m)
+
+  &:first-child
+    margin-top 100px
+
+  &:last-child
+    margin-bottom 120px
 
   & + &
     margin-top var(--indent-m)
@@ -15,46 +71,9 @@
   &.user
     background-color var(--accent-color-alpha-100)
 
-.prompt
-  position relative
-  width 100%
-  padding var(--indent-m)
 
-  &::before
-    content ''
-    position absolute
-    bottom 100%
-    left 0
-    width 100%
-    height 50px
-    background-image linear-gradient(to top, var(--decent-color), transparent)
-    pointer-events none
-
-
-.promptInput
-.promptInput > label
-  width 100%
-
-.promptButtonsPlaceholder
-  width 100px
-  popinter-events none
-
-.promptButtons
-  z-index 1
-  position absolute
-  right 33px
-  bottom 24px
-  transform scale(1.1)
-
-  display flex
-  flex-shrink 0
-  margin-right -7px
-
-  & button
-    background-color transparent !important
-
-    &:hover
-      color var(--active-color)
-
-    & + &
-      margin-left 5px
+@keyframes fadeToDefaultColorOnce
+  from
+    color var(--active-color)
+  to
+    color var(--accent-color)

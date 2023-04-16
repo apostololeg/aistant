@@ -1,10 +1,22 @@
 import cn from 'classnames';
-import { LS, Input, Button, Icon, Scroll } from 'uilib';
+import {
+  LS,
+  Input,
+  Button,
+  AssistiveText,
+  Icon,
+  Scroll,
+  Router,
+  Route,
+  LightBox,
+} from 'uilib';
 import { createStore, withStore } from 'justorm/react';
 
-import RequestButton from 'components/RequestButton/RequestButton';
+import Settings, { SettingsStore } from 'components/Settings/Settings';
 
 import S from './Dialogue.styl';
+import { useEffect, useRef } from 'react';
+import Prompt from 'components/Prompt/Prompt';
 
 type Props = {
   store?: any;
@@ -18,92 +30,137 @@ enum Role {
 
 type Message = { role: Role; content: string };
 
-const initialMessages: Message[] = [];
-// const initialMessages = LS.get('messages') || [];
+// const initialMessages: Message[] = [];
+const initialMessages: Message[] = LS.get('messages') || [];
 
 const STORE = createStore('dialogue', {
   messages: initialMessages,
   usedTokens: LS.get('usedTokens') || 0,
 
-  prompt: '',
+  prompt: LS.get('prompt') || '',
+  error: '',
   isPrompting: false,
+
+  setPrompt(prompt: string) {
+    this.prompt = prompt;
+    LS.set('prompt', prompt);
+  },
+
+  setError(error: string) {
+    this.error = error;
+  },
 
   addMessage(role: Role, content) {
     this.messages.push({ role, content });
-    // LS.set('messages', this.messages);
+    LS.set('messages', this.messages);
+  },
+
+  changeModel(model: string) {
+    this.model = model;
+    LS.set('model', model);
   },
 
   async ask(prompt: string = this.prompt) {
-    if (!prompt || this.isPrompting) return;
+    const { apiKey } = SettingsStore;
 
-    console.log('ask::', prompt);
+    if (!prompt || this.isPrompting || !apiKey) return;
 
     this.addMessage(Role.User, prompt);
+    this.setPrompt('');
+    this.setError('');
     this.isPrompting = true;
-    this.prompt = '';
 
     try {
-      const response = await fetch('http://localhost:4000/api/gpt', {
+      const response = await fetch(`/api/gpt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
+          apiKey,
+          model: SettingsStore.model,
           messages: this.messages.slice(-5), // save tokens
         }),
       });
+
       const { answer, tokens } = await response.json();
 
+      if (response.status !== 200) {
+        this.setError('Something went wrong');
+        return;
+      }
+
       this.usedTokens += tokens;
+      LS.set('usedTokens', this.usedTokens);
+
       this.addMessage(Role.Assistant, answer.content);
+
+      const { autoPronounce, voiceLang, voiceName } = SettingsStore;
+
+      if (autoPronounce && voiceName) {
+        const utterance = new SpeechSynthesisUtterance(answer.content);
+        utterance.lang = voiceLang;
+        speechSynthesis.speak(utterance);
+      }
     } finally {
       this.isPrompting = false;
     }
   },
+
+  clearHistory() {
+    this.messages = [];
+    LS.set('messages', this.messages);
+  },
 });
 
-export default withStore('dialogue')(function Dialogue({
+export default withStore(['dialogue', { router: 'path' }])(function Dialogue({
   store: {
-    dialogue: { prompt, messages, isPrompting },
+    dialogue: { messages, usedTokens, isPrompting },
+    router,
   },
 }: Props) {
-  const onTyping = (e, val) => (STORE.prompt = val);
-  const onTransciption = txt => (STORE.prompt = txt);
+  const { path } = router;
 
-  const onRequest = () => STORE.ask();
-  const onSubmit = e => {
-    e.preventDefault();
-    STORE.ask();
-  };
+  const listRef = useRef<HTMLDivElement>(null);
 
-  console.log('prompt', prompt);
+  useEffect(() => {
+    // scroll to bottom
+    // @ts-ignore
+    const inner = listRef.current.innerElem;
+    inner.scrollTo(0, inner.scrollHeight, { behavior: 'smooth' });
+  }, [messages]);
 
   return (
     <div className={S.root}>
-      <Scroll y className={S.messages} offset={{ y: { before: 20 } }}>
+      <div className={S.header}>
+        <div className={S.tokens}>
+          <div className={S.token} />
+          &nbsp;{usedTokens}
+        </div>
+        <Button variant="clear" onClick={() => router.go('/settings')}>
+          <Icon size="l" type="gear" />
+        </Button>
+      </div>
+      <Scroll
+        y
+        // className={S.messages}
+        offset={{ y: { before: 70, after: 100 } }}
+        ref={listRef}
+      >
         {messages.map(({ role, content }) => (
           <div key={content} className={cn(S.message, S[role])}>
             {content}
           </div>
         ))}
       </Scroll>
-      <form onSubmit={onSubmit} className={S.prompt}>
-        <Input
-          className={S.promptInput}
-          size="l"
-          type="textarea"
-          placeholder="Type your question"
-          onChange={onTyping}
-          addonRight={<div className={S.promptButtonsPlaceholder} />}
-          value={prompt}
-          // hasClear
-        />
-        <div className={S.promptButtons}>
-          <RequestButton onResult={onTransciption} onComplete={onRequest} />
-          <Button variant="clear" type="submit">
-            <Icon size="l" type="send" />
-          </Button>
-        </div>
-      </form>
+
+      <Prompt />
+
+      <Router>
+        <Route path="/settings" component={() => null} />
+      </Router>
+
+      <LightBox isOpen={path === '/settings'} onClose={router.back} blur>
+        <Settings onClearHistory={STORE.clearHistory} />
+      </LightBox>
     </div>
   );
 });
