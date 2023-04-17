@@ -4,11 +4,13 @@ import { AssistiveText, Input, Button, Icon } from 'uilib';
 import RequestButton from 'components/RequestButton/RequestButton';
 
 import S from './Prompt.styl';
+import { useMemo } from 'react';
 
 export default withStore({
-  dialogue: ['error', 'prompt'],
+  dialogue: ['error', 'prompt', 'isPrompting'],
 })(function Prompt({ store: { dialogue } }) {
-  const { error, prompt } = dialogue;
+  const { error, prompt, isPrompting } = dialogue;
+
   const onTyping = (e, val) => dialogue.setPrompt(val);
   const onTransciption = txt => dialogue.setPrompt(txt);
 
@@ -18,6 +20,24 @@ export default withStore({
     e.preventDefault();
     dialogue.ask();
   };
+
+  const buttons = useMemo(() => {
+    if (isPrompting) {
+      return (
+        <Button variant="clear">
+          <Icon type="loader" />
+        </Button>
+      );
+    }
+    return (
+      <>
+        <RequestButton onResult={onTransciption} onComplete={onRequest} />
+        <Button variant="clear" type="submit">
+          <Icon size="l" type="send" />
+        </Button>
+      </>
+    );
+  }, [isPrompting, onTransciption, onRequest]);
 
   return (
     <form onSubmit={onSubmit} className={S.root}>
@@ -36,12 +56,7 @@ export default withStore({
         value={prompt}
         // hasClear
       />
-      <div className={S.buttons}>
-        <RequestButton onResult={onTransciption} onComplete={onRequest} />
-        <Button variant="clear" type="submit">
-          <Icon size="l" type="send" />
-        </Button>
-      </div>
+      <div className={S.buttons}>{buttons}</div>
     </form>
   );
 });
