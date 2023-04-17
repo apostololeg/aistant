@@ -1,11 +1,13 @@
 import { withStore } from 'justorm/react';
-import { VH, Theme } from 'uilib';
+import { VH, Theme, dom } from 'uilib';
 
 import 'tools/i18n';
 // import 'stores';
 
 import S from './App.styl';
 import Dialogue from 'components/Dialogue/Dialogue';
+
+dom.watchControllerFlag();
 
 export default withStore({ settings: 'isDarkTheme' })(function App({
   store: {

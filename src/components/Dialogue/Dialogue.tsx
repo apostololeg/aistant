@@ -17,6 +17,7 @@ import Settings, { SettingsStore } from 'components/Settings/Settings';
 import S from './Dialogue.styl';
 import { useEffect, useRef } from 'react';
 import Prompt from 'components/Prompt/Prompt';
+import { Token } from 'components/Token/Token';
 
 type Props = {
   store?: any;
@@ -131,10 +132,7 @@ export default withStore(['dialogue', { router: 'path' }])(function Dialogue({
   return (
     <div className={S.root}>
       <div className={S.header}>
-        <div className={S.tokens}>
-          <div className={S.token} />
-          &nbsp;{usedTokens}
-        </div>
+        <Token value={usedTokens} />
         <Button variant="clear" onClick={() => router.go('/settings')}>
           <Icon size="l" type="gear" />
         </Button>

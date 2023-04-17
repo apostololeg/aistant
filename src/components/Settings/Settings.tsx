@@ -103,9 +103,11 @@ export const SettingsStore = createStore('settings', {
 
   updateVoicesByLang() {
     const lang = this.voiceLang;
+    const langShort = lang.split('-')[0];
     const voiceName =
       voicesByLang[lang] ||
-      this.voices.find(voice => voice.lang === lang)?.name;
+      this.voices.find(voice => voice.lang === lang)?.name ||
+      this.voices.find(voice => voice.lang.startsWith(langShort))?.name;
 
     this.changeVoiceName(voiceName);
   },
@@ -161,16 +163,18 @@ export default withStore([
     },
   },
 }) {
-  const voicesOptions = useMemo(
-    () =>
-      voices.reduce((acc, { lang, name }) => {
-        if (lang === voiceLang) {
-          acc.push({ id: name, label: name });
-        }
-        return acc;
-      }, []),
-    [voices, voiceLang]
-  );
+  const voicesOptions = useMemo(() => {
+    if (!voiceLang) return [];
+
+    const langShort = voiceLang.split('-')[0];
+
+    return voices.reduce((acc, { lang, name }) => {
+      if (lang.startsWith(langShort)) {
+        acc.push({ id: name, label: name });
+      }
+      return acc;
+    }, []);
+  }, [voices, voiceLang]);
 
   useEffect(() => {
     // init default voice / first time
@@ -226,19 +230,33 @@ export default withStore([
       </Item>
       <Item hint="Speech recognition and answer pronouncation language">
         <Select
+          isSearchable
+          inputProps={{ className: S.input }}
           label="Voice language"
           options={SPEECH_RECOGNITION_LANGS_OPTIONS}
           value={voiceLang}
           onChange={changeVoiceLang}
+          required
+          hideRequiredStar
         />
       </Item>
-      <Item hint="You can choose specific voice for selected voice language">
+      <Item
+        hint={
+          voicesOptions.length
+            ? 'You can choose specific voice for selected voice language'
+            : null
+        }
+      >
         <>
           <Select
+            isSearchable
+            inputProps={{ className: S.input }}
             label="Voice"
             options={voicesOptions}
             value={voiceName}
             onChange={changeVoiceName}
+            required
+            hideRequiredStar
           />
           {!voicesOptions.length && (
             <Hint variant="danger">No voices for selected language</Hint>

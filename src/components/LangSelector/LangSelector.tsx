@@ -17,6 +17,8 @@ export default withStore({
       options={options}
       value={i18n.lang}
       onChange={i18n.changeLang}
+      required
+      hideRequiredStar
     />
   );
 });

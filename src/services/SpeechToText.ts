@@ -65,7 +65,11 @@ export class SpeechToText {
 
   onResult = e => {
     const { onResult, onSilence } = this.props;
-    const transcript = e.results[0][0].transcript;
+    const res = [...e.results].pop();
+
+    if (!res) return;
+
+    const { transcript } = res[0] as SpeechRecognitionAlternative;
 
     clearTimeout(this.silenceTimeout);
     if (onSilence) this.silenceTimeout = setTimeout(onSilence, SILENCE_TIMEOUT);

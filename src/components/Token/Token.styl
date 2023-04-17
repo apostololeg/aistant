@@ -1,0 +1,28 @@
+@property --a {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 90deg;
+}
+@property --c1 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: 10%;
+}
+@property --c2 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: red;
+}
+
+.root
+  display flex
+  align-items center
+
+.coin
+  border-radius 50%
+  width 20px
+  height 20px
+  margin-right 3px
+  transition --a, --c1, --c2
+  box-shadow inset 0 0 0 2px var(--decent-color-alpha-300)
+  opacity .3
