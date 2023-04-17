@@ -1,7 +1,10 @@
 import { withStore } from 'justorm/react';
 import { VH, Theme, dom } from 'uilib';
 
-import 'pwa';
+if (!isDEV) {
+  import('pwa');
+}
+
 import 'tools/i18n';
 // import 'stores';
 
