@@ -18,6 +18,7 @@ import LangSelector from 'components/LangSelector/LangSelector';
 import speechRecognitionLanguages from './speechRecognitionLangs.json';
 
 import S from './Settings.styl';
+import { i18n } from 'tools/i18n';
 
 const MODELS = [
   'gpt-4',
@@ -63,6 +64,14 @@ export const SettingsStore = createStore('settings', {
   _set(key, val) {
     this[key] = val;
     LS.set(key, val);
+  },
+
+  updater: null as any,
+  setUpdater(updater) {
+    this.updater = () => {
+      updater();
+      this.updater = null;
+    };
   },
 
   apiKey: LS.get('apiKey') || '',
@@ -146,6 +155,7 @@ export default withStore([
   store: {
     dialogue: { messages },
     settings: {
+      updater,
       apiKey,
       setAPIKey,
       isDarkTheme,
@@ -189,6 +199,13 @@ export default withStore([
       innerClassName={S.inner}
       offset={{ y: { before: 70, after: 90 } }}
     >
+      {updater && (
+        <Item hint={i18n('New update available')}>
+          <Button variant="primary" onClick={updater}>
+            Update application
+          </Button>
+        </Item>
+      )}
       <Item
         hint={
           <>

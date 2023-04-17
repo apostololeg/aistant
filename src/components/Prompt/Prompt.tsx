@@ -1,10 +1,11 @@
+import { useMemo } from 'react';
 import { withStore } from 'justorm/react';
 import { AssistiveText, Input, Button, Icon } from 'uilib';
 
+import { i18n } from 'tools/i18n';
 import RequestButton from 'components/RequestButton/RequestButton';
 
 import S from './Prompt.styl';
-import { useMemo } from 'react';
 
 export default withStore({
   dialogue: ['error', 'prompt', 'isPrompting'],

@@ -112,9 +112,16 @@ const STORE = createStore('dialogue', {
   },
 });
 
-export default withStore(['dialogue', { router: 'path' }])(function Dialogue({
+export default withStore([
+  'dialogue',
+  {
+    router: 'path',
+    settings: 'updater',
+  },
+])(function Dialogue({
   store: {
-    dialogue: { messages, usedTokens, isPrompting },
+    dialogue: { messages, usedTokens },
+    settings: { updater },
     router,
   },
 }: Props) {
@@ -133,7 +140,11 @@ export default withStore(['dialogue', { router: 'path' }])(function Dialogue({
     <div className={S.root}>
       <div className={S.header}>
         <Token value={usedTokens} />
-        <Button variant="clear" onClick={() => router.go('/settings')}>
+        <Button
+          variant="clear"
+          onClick={() => router.go('/settings')}
+          className={cn(updater && S.hasUpdates)}
+        >
           <Icon size="l" type="gear" />
         </Button>
       </div>

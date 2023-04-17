@@ -2,8 +2,10 @@
 // Please do not change this file!
 interface CssExports {
   'fadeToDefaultColorOnce': string;
+  'hasUpdates': string;
   'header': string;
   'message': string;
+  'pulseShadow': string;
   'root': string;
   'user': string;
 }

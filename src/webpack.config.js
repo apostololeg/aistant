@@ -10,6 +10,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import HtmlWebpackPartialsPlugin from 'html-webpack-partials-plugin';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import OfflinePlugin from '@lcdp/offline-plugin';
 
 import paths from './paths.js';
 
@@ -209,6 +210,16 @@ export default (_env, argv) => {
 
       isDev && new webpack.HotModuleReplacementPlugin(),
       isDev && new ReactRefreshWebpackPlugin(),
+
+      !isDev &&
+        new OfflinePlugin({
+          ServiceWorker: {
+            events: true,
+          },
+          caches: {
+            main: ['index.html'],
+          },
+        }),
     ].filter(Boolean),
   };
 
