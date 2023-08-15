@@ -5,6 +5,26 @@ import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
 // import { Readable } from 'stream';
 
+import { createCompletion, loadModel } from 'gpt4all';
+
+(async function runGPT() {
+  // const ll = await loadModel('ggml-all-MiniLM-L6-v2-f16', { verbose: true });
+
+  const ll = await loadModel('ggml-gpt4all-j-v1.3-groovy', {
+    verbose: true,
+    modelPath: '/Users/olehapostol/prj/aistant/models/',
+  });
+
+  console.log('ll', ll);
+
+  // const response = await createCompletion(ll, [
+  //   { role: 'system', content: 'You are meant to be annoying and unhelpful.' },
+  //   { role: 'user', content: 'What is 1 + 1?' },
+  // ]);
+
+  // console.log('GPT:', response);
+})();
+
 const envs = dotenv.config().parsed;
 
 const app = express();
