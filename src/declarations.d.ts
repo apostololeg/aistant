@@ -1,6 +1,6 @@
 declare module '*.svg';
 declare module '*.jpg';
-declare module 'uilib';
+declare module '@homecode/ui';
 declare module 'uilib/*';
 
 declare var isDEV: string;

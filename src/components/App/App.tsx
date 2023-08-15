@@ -1,9 +1,5 @@
 import { withStore } from 'justorm/react';
-import { VH, Theme, dom } from 'uilib';
-
-if (!isDEV) {
-  import('pwa');
-}
+import { VH, Theme, dom } from '@homecode/ui';
 
 import 'tools/i18n';
 // import 'stores';

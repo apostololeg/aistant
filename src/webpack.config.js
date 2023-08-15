@@ -30,7 +30,6 @@ export default (_env, argv) => {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.styl'],
       alias: {
         theme: `${paths.src}/theme.styl`,
-        uilib: '@foreverido/uilib',
       },
     },
 

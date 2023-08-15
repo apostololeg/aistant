@@ -9,7 +9,7 @@ import {
   Router,
   Route,
   LightBox,
-} from 'uilib';
+} from '@homecode/ui';
 import { createStore, withStore } from 'justorm/react';
 
 import Settings, { SettingsStore } from 'components/Settings/Settings';

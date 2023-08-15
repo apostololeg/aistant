@@ -1,1 +1,17 @@
-{}
+{
+  "New update available": "Доступно нове оновлення",
+  "Update application": "Оновити додаток",
+  "Get your API key from": "Отримайте свій API-ключ на",
+  "OpenAI website": "сторінці OpenAI",
+  "OpenAI API key": "API-ключ OpenAI",
+  "Dark theme": "Темна тема",
+  "Model": "Модель",
+  "Interface language": "Мова інтерфейсу",
+  "Speech recognition and answer pronouncation language": "Мова розпізнавання мови та вимови відповідей",
+  "Voice language": "Мова голосу",
+  "Voice": "Голос",
+  "No voices for selected language": "Немає голосів для вибраної мови",
+  "You always can run pronounciation by clicking on message": "Ви завжди можете запустити вимови, натиснувши на повідомлення",
+  "Auto pronounce answers": "Автоматично вимовляти відповіді",
+  "Clear chat history": "Очистити історію чату"
+}

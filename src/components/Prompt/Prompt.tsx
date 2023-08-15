@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { withStore } from 'justorm/react';
-import { AssistiveText, Input, Button, Icon } from 'uilib';
+import { AssistiveText, Input, Button, Icon } from '@homecode/ui';
 
 import { i18n } from 'tools/i18n';
 import RequestButton from 'components/RequestButton/RequestButton';

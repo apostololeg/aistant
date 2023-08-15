@@ -1,5 +1,7 @@
 import { withStore } from 'justorm/react';
-import { Select } from 'uilib';
+import { Select } from '@homecode/ui';
+
+import { i18n } from 'tools/i18n';
 
 const options = [
   { id: 'en', label: 'English' },
@@ -9,14 +11,18 @@ const options = [
 
 export default withStore({
   i18n: 'lang',
-})(function LangSelector({ store: { i18n } }) {
+})(function LangSelector({
+  store: {
+    i18n: { lang, changeLang },
+  },
+}) {
   return (
     <Select
-      label="Language"
+      label={i18n('Interface language')}
       // size="s"
       options={options}
-      value={i18n.lang}
-      onChange={i18n.changeLang}
+      value={lang}
+      onChange={changeLang}
       required
       hideRequiredStar
     />

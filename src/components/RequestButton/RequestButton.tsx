@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import cn from 'classnames';
 import { withStore } from 'justorm/react';
-import { Button, Icon } from 'uilib';
+import { Button, Icon } from '@homecode/ui';
 
 import { SpeechToText } from 'services/SpeechToText';
 

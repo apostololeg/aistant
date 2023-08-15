@@ -1,4 +1,4 @@
-import { ThemeHelpers, ThemeDefaults } from 'uilib';
+import { ThemeHelpers, ThemeDefaults } from '@homecode/ui';
 
 const { colors, getColors, getConfig } = ThemeDefaults;
 

@@ -1,5 +1,8 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
+
+if (!isDEV) {
+  import('pwa');
+}
 
 import App from './components/App/App';
 

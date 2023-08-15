@@ -9,12 +9,13 @@
   "scripts": {
     "dev": "NODE_ENV=development webpack-dev-server --mode=development --config ./src/webpack.config.js --progress",
     "build": "NODE_ENV=production webpack  --config ./src/webpack.config.js --progress",
-    "server": "node ./src/server.js"
+    "server": "node ./src/server.js",
+    "deploy": "./bin/deploy"
   },
   "dependencies": {
     "@chengsokdara/use-whisper": "^0.2.0",
     "@ffmpeg/ffmpeg": "^0.11.6",
-    "@foreverido/uilib": "^4.6.7",
+    "@homecode/ui": "^4.17.2",
     "@lcdp/offline-plugin": "^5.1.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@types/react": "^18.0.35",

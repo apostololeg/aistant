@@ -10,15 +10,15 @@ import {
   AssistiveText,
   Scroll,
   LS,
-} from 'uilib';
+} from '@homecode/ui';
 
 import { getThemeConfig } from 'tools/theme';
+import { I18N, i18n, storeName as i18nStoreName } from 'tools/i18n';
 import LangSelector from 'components/LangSelector/LangSelector';
 
 import speechRecognitionLanguages from './speechRecognitionLangs.json';
 
 import S from './Settings.styl';
-import { i18n } from 'tools/i18n';
 
 const MODELS = [
   'gpt-4',
@@ -202,25 +202,25 @@ export default withStore([
       {updater && (
         <Item hint={i18n('New update available')}>
           <Button variant="primary" onClick={updater}>
-            Update application
+            <I18N id="Update application" />
           </Button>
         </Item>
       )}
       <Item
         hint={
           <>
-            You can get API key on
+            <I18N id="Get your API key from" />
             <Link
               href="https://beta.openai.com/docs/api-reference/authentication"
               target="_blank"
             >
-              OpenAI website
+              <I18N id="OpenAI website" />
             </Link>
           </>
         }
       >
         <Input
-          label="OpenAI API key"
+          label={i18n('OpenAI API key')}
           className={S.input}
           type="password"
           value={apiKey}
@@ -229,27 +229,27 @@ export default withStore([
       </Item>
       <Item>
         <Checkbox
-          label="Dark theme"
+          label={i18n('Dark theme')}
           checked={isDarkTheme}
           onChange={toggleTheme}
         />
       </Item>
       <Item>
         <Select
-          label="Model"
+          label={i18n('Model')}
           options={MODEL_OPTIONS}
           value={model}
           onChange={changeModel}
         />
       </Item>
-      <Item hint="Interface language">
+      <Item>
         <LangSelector />
       </Item>
-      <Item hint="Speech recognition and answer pronouncation language">
+      <Item hint={i18n('Speech recognition and answer pronouncation language')}>
         <Select
           isSearchable
           inputProps={{ className: S.input }}
-          label="Voice language"
+          label={i18n('Voice language')}
           options={SPEECH_RECOGNITION_LANGS_OPTIONS}
           value={voiceLang}
           onChange={changeVoiceLang}
@@ -260,7 +260,7 @@ export default withStore([
       <Item
         hint={
           voicesOptions.length
-            ? 'You can choose specific voice for selected voice language'
+            ? i18n('You can choose specific voice for selected voice language')
             : null
         }
       >
@@ -268,7 +268,7 @@ export default withStore([
           <Select
             isSearchable
             inputProps={{ className: S.input }}
-            label="Voice"
+            label={i18n('Voice')}
             options={voicesOptions}
             value={voiceName}
             onChange={changeVoiceName}
@@ -276,13 +276,17 @@ export default withStore([
             hideRequiredStar
           />
           {!voicesOptions.length && (
-            <Hint variant="danger">No voices for selected language</Hint>
+            <Hint variant="danger">
+              <I18N id="No voices for selected language" />
+            </Hint>
           )}
         </>
       </Item>
-      <Item hint="You always can run pronounciation by clicking on message">
+      <Item
+        hint={i18n('You always can run pronounciation by clicking on message')}
+      >
         <Checkbox
-          label="Auto pronounce answers"
+          label={i18n('Auto pronounce answers')}
           checked={autoPronounce}
           onChange={changeAutoPronounce}
         />
@@ -293,8 +297,8 @@ export default withStore([
           className={S.clearButton}
           disabled={messages.length === 0}
         >
-          <Icon type="delete" />
-          Clear chat history
+          <Icon type="delete" size="l" />
+          <I18N id="Clear chat history" />
         </Button>
       </Item>
     </Scroll>
