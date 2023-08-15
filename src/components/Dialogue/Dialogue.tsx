@@ -72,17 +72,17 @@ const STORE = createStore('dialogue', {
     this.isPrompting = true;
 
     try {
-      const response = await fetch(`/api/gpt`, {
+      const response = await fetch(`/api/gpt/prompt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          apiKey,
-          model: SettingsStore.model,
           messages: this.messages.slice(-5), // save tokens
+          // options: { temp: .5 }
         }),
       });
 
-      const { answer, tokens } = await response.json();
+      const { choices, usage } = await response.json();
+      const tokens = usage.total_tokens;
 
       if (response.status !== 200) {
         this.setError('Something went wrong');
@@ -91,13 +91,14 @@ const STORE = createStore('dialogue', {
 
       this.usedTokens += tokens;
       LS.set('usedTokens', this.usedTokens);
+      const { role, content } = choices[0].message;
 
-      this.addMessage(Role.Assistant, answer.content);
+      this.addMessage(role as Role, content);
 
       const { autoPronounce, voiceLang, voiceName } = SettingsStore;
 
       if (autoPronounce && voiceName) {
-        const utterance = new SpeechSynthesisUtterance(answer.content);
+        const utterance = new SpeechSynthesisUtterance(content);
         utterance.lang = voiceLang;
         speechSynthesis.speak(utterance);
       }
