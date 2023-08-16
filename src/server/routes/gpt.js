@@ -1,11 +1,9 @@
 import { Router } from 'express';
 import { createCompletion, loadModel } from 'gpt4all';
 
+import { MODEL_PATH, MODEL_NAME } from 'config';
+
 const router = Router();
-// const MODEL_NAME = 'wizardlm-13b-v1.1-superhot-8k.ggmlv3.q4_0';
-const MODEL_NAME = 'llama2_7b_chat_uncensored.ggmlv3.q2_K';
-// const MODEL_NAME = 'orca-mini-3b.ggmlv3.q4_0';
-const MODEL_PATH = '/home/oleg/prj/aistant/models/';
 const DEFAULT_OPTIONS = {
   verbose: true,
 };
