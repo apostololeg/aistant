@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import { createCompletion, loadModel } from 'gpt4all';
 
-import { MODEL_PATH, MODEL_NAME } from 'config';
+import cfg from './../../../config/const';
 
+const { MODEL_PATH, MODEL_NAME } = cfg;
 const router = Router();
 const DEFAULT_OPTIONS = {
   verbose: true,

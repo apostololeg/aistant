@@ -1,5 +1,7 @@
-const { parsed: env } = require('dotenv').config();
+import dotenv from 'dotenv';
+
+const { parsed: env } = dotenv.config();
 
 env.PRODUCTION = process.env.NODE_ENV === 'production';
 
-module.exports = env;
+export default env;
