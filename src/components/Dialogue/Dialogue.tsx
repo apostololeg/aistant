@@ -18,6 +18,7 @@ import S from './Dialogue.styl';
 import { useEffect, useRef } from 'react';
 import Prompt from 'components/Prompt/Prompt';
 import { Token } from 'components/Token/Token';
+import { DateTime } from '@homecode/ui';
 
 type Props = {
   store?: any;
@@ -29,7 +30,11 @@ enum Role {
   Assistant = 'assistant',
 }
 
-type Message = { role: Role; content: string };
+type Message = {
+  role: Role;
+  content: string;
+  duration?: number;
+};
 
 // const initialMessages: Message[] = [];
 const initialMessages: Message[] = LS.get('messages') || [];
@@ -51,8 +56,8 @@ const STORE = createStore('dialogue', {
     this.error = error;
   },
 
-  addMessage(role: Role, content) {
-    this.messages.push({ role, content });
+  addMessage(role: Role, content: string, duration?: number) {
+    this.messages.push({ role, content, duration });
     LS.set('messages', this.messages);
   },
 
@@ -72,6 +77,7 @@ const STORE = createStore('dialogue', {
     this.isPrompting = true;
 
     try {
+      const startedAt = Date.now();
       const response = await fetch(`/api/gpt/prompt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -80,6 +86,7 @@ const STORE = createStore('dialogue', {
           // options: { temp: .5 }
         }),
       });
+      const duration = Date.now() - startedAt;
 
       const { choices, usage } = await response.json();
       const tokens = usage.total_tokens;
@@ -93,7 +100,7 @@ const STORE = createStore('dialogue', {
       LS.set('usedTokens', this.usedTokens);
       const { role, content } = choices[0].message;
 
-      this.addMessage(role as Role, content);
+      this.addMessage(role as Role, content, duration);
 
       const { autoPronounce, voiceLang, voiceName } = SettingsStore;
 
@@ -155,9 +162,14 @@ export default withStore([
         offset={{ y: { before: 70, after: 100 } }}
         ref={listRef}
       >
-        {messages.map(({ role, content }) => (
+        {messages.map(({ role, content, duration }) => (
           <div key={content} className={cn(S.message, S[role])}>
             {content}
+            {duration && (
+              <AssistiveText className={S.duration}>
+                {(duration / 1000).toFixed()} sec
+              </AssistiveText>
+            )}
           </div>
         ))}
       </Scroll>

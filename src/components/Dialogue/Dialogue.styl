@@ -68,6 +68,7 @@
 
 
 .message
+  position relative
   padding var(--indent-m)
 
   &:first-child
@@ -81,3 +82,11 @@
 
   &.user
     background-color var(--accent-color-alpha-100)
+
+.duration
+  font-size 80%
+  opacity 0.5
+
+  position absolute
+  bottom calc(var(--indent-s) * -1)
+  left var(--indent-s)
