@@ -3,9 +3,12 @@ import { createCompletion, loadModel } from 'gpt4all';
 
 const router = Router();
 // const MODEL_NAME = 'wizardlm-13b-v1.1-superhot-8k.ggmlv3.q4_0';
-const MODEL_NAME = 'orca-mini-3b.ggmlv3.q4_0';
+const MODEL_NAME = 'llama2_7b_chat_uncensored.ggmlv3.q2_K';
+// const MODEL_NAME = 'orca-mini-3b.ggmlv3.q4_0';
 const MODEL_PATH = '/home/oleg/prj/aistant/models/';
-const DEFAULT_OPTIONS = {};
+const DEFAULT_OPTIONS = {
+  verbose: true,
+};
 
 let ll;
 const init = (async function () {
