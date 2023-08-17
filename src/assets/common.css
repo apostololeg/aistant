@@ -23,6 +23,10 @@ body {
   background-color: var(--active-color-alpha-500);
 }
 
+button:hover {
+  color: var(--active-color);
+}
+
 h1,
 h2,
 h3,

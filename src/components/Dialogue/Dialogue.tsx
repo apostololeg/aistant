@@ -146,13 +146,24 @@ export default withStore([
     <div className={S.root}>
       <div className={S.header}>
         <Token value={usedTokens} />
-        <Button
-          variant="clear"
-          onClick={() => router.go('/settings')}
-          className={cn(updater && S.hasUpdates)}
-        >
-          <Icon size="l" type="gear" />
-        </Button>
+        <div>
+          <Button
+            variant="clear"
+            onClick={STORE.clearHistory}
+            title="Clear chat"
+          >
+            <Icon size="l" type="draft" />
+          </Button>
+          &nbsp;&nbsp;
+          <Button
+            variant="clear"
+            onClick={() => router.go('/settings')}
+            className={cn(updater && S.hasUpdates)}
+            title="Settings"
+          >
+            <Icon size="l" type="gear" />
+          </Button>
+        </div>
       </div>
       <Scroll
         y
