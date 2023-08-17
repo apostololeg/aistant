@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { createStore, withStore } from 'justorm/react';
 import {
   Input,
@@ -19,12 +19,6 @@ import LangSelector from 'components/LangSelector/LangSelector';
 import speechRecognitionLanguages from './speechRecognitionLangs.json';
 
 import S from './Settings.styl';
-
-const MODELS = ['llama2_7b_chat_uncensored.ggmlv3.q2_K'];
-
-const DEFAULT_MODEL = MODELS[0];
-
-const MODEL_OPTIONS = MODELS.map(name => ({ id: name, label: name }));
 
 const SPEECH_RECOGNITION_LANGS_OPTIONS = (
   speechRecognitionLanguages as any[]
@@ -59,6 +53,9 @@ export const SettingsStore = createStore('settings', {
     LS.set(key, val);
   },
 
+  models: [],
+  loadedModels: {},
+
   updater: null as any,
   setUpdater(updater) {
     this.updater = () => {
@@ -74,7 +71,7 @@ export const SettingsStore = createStore('settings', {
     this.currThemeConfig = getThemeConfig(this.isDarkTheme);
   },
 
-  model: LS.get('model') || DEFAULT_MODEL,
+  model: LS.get('model'),
   changeModel(model) {
     this._set('model', model);
   },
@@ -119,6 +116,14 @@ speechSynthesis.addEventListener('voiceschanged', () => {
   SettingsStore.updateVoicesList();
 });
 
+fetch('/api/gpt/state')
+  .then(async response => response.json())
+  .then(({ models, loaded }) => {
+    SettingsStore.models.push(...models);
+    Object.assign(SettingsStore.loadedModels, loaded);
+    SettingsStore.model = models[0];
+  });
+
 const Hint = ({ children, ...rest }) => (
   <AssistiveText className={S.hint} {...rest}>
     {children}
@@ -146,6 +151,8 @@ export default withStore([
       updater,
       isDarkTheme,
       toggleTheme,
+      models,
+      loadedModels,
       model,
       changeModel,
       voiceLang,
@@ -171,6 +178,11 @@ export default withStore([
       return acc;
     }, []);
   }, [voices, voiceLang]);
+
+  const modelsOptions = useMemo(
+    () => models.map(name => ({ id: name, label: name })),
+    [models, loadedModels]
+  );
 
   useEffect(() => {
     // init default voice / first time
@@ -202,8 +214,8 @@ export default withStore([
       <Item>
         <Select
           label={i18n('Model')}
-          options={MODEL_OPTIONS}
-          disabled={MODEL_OPTIONS.length < 2}
+          options={modelsOptions}
+          disabled={modelsOptions.length < 2}
           value={model}
           onChange={changeModel}
           required

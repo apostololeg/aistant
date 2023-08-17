@@ -66,6 +66,26 @@ const STORE = createStore('dialogue', {
     LS.set('model', model);
   },
 
+  async init() {
+    const { model } = this;
+
+    const response = await fetch(`/api/gpt/state`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (response.status !== 200) {
+      this.setError('Something went wrong');
+      return;
+    }
+
+    const { usage } = await response.json();
+    const tokens = usage.total_tokens;
+
+    this.usedTokens += tokens;
+    LS.set('usedTokens', this.usedTokens);
+  },
+
   async ask(prompt: string = this.prompt) {
     if (!prompt || this.isPrompting) return;
 
@@ -76,12 +96,14 @@ const STORE = createStore('dialogue', {
 
     try {
       const startedAt = Date.now();
+      const modelName = SettingsStore.model;
       const response = await fetch(`/api/gpt/prompt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: this.messages.slice(-5), // save tokens
           // options: { temp: .5 }
+          modelName,
         }),
       });
       const duration = Date.now() - startedAt;
@@ -99,6 +121,8 @@ const STORE = createStore('dialogue', {
       const { role, content } = choices[0].message;
 
       this.addMessage(role as Role, content, duration);
+
+      SettingsStore.loadedModels[modelName] = true;
 
       const { autoPronounce, voiceLang, voiceName } = SettingsStore;
 
