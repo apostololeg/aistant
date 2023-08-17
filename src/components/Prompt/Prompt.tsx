@@ -15,6 +15,12 @@ export default withStore({
   const onTyping = (e, val) => dialogue.setPrompt(val);
   const onTransciption = txt => dialogue.setPrompt(txt);
 
+  const onKeyPress = e => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey || e.shiftKey)) {
+      onSubmit(e);
+    }
+  };
+
   const onRequest = () => dialogue.ask();
   const onSubmit = e => {
     speechSynthesis.cancel();
@@ -54,6 +60,7 @@ export default withStore({
         placeholder="Ask me..."
         onChange={onTyping}
         addonRight={<div className={S.buttonsPlaceholder} />}
+        onKeyPress={onKeyPress}
         value={prompt}
         // hasClear
       />
