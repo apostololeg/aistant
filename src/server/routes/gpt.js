@@ -9,6 +9,8 @@ const DEFAULT_OPTIONS = {
   verbose: true,
 };
 
+const models = {};
+
 let ll;
 const init = (async function () {
   ll = await loadModel(MODEL_NAME, {

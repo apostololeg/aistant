@@ -20,16 +20,9 @@ import speechRecognitionLanguages from './speechRecognitionLangs.json';
 
 import S from './Settings.styl';
 
-const MODELS = [
-  'gpt-4',
-  'gpt-4-0314',
-  'gpt-4-32k',
-  'gpt-4-32k-0314',
-  'gpt-3.5-turbo',
-  'gpt-3.5-turbo-0301',
-];
+const MODELS = ['llama2_7b_chat_uncensored.ggmlv3.q2_K'];
 
-const DEFAULT_MODEL = 'gpt-3.5-turbo';
+const DEFAULT_MODEL = MODELS[0];
 
 const MODEL_OPTIONS = MODELS.map(name => ({ id: name, label: name }));
 
@@ -72,11 +65,6 @@ export const SettingsStore = createStore('settings', {
       updater();
       this.updater = null;
     };
-  },
-
-  apiKey: LS.get('apiKey') || '',
-  setAPIKey(apiKey) {
-    this._set('apiKey', apiKey);
   },
 
   isDarkTheme,
@@ -156,8 +144,6 @@ export default withStore([
     dialogue: { messages },
     settings: {
       updater,
-      apiKey,
-      setAPIKey,
       isDarkTheme,
       toggleTheme,
       model,
@@ -206,27 +192,6 @@ export default withStore([
           </Button>
         </Item>
       )}
-      <Item
-        hint={
-          <>
-            <I18N id="Get your API key from" />
-            <Link
-              href="https://beta.openai.com/docs/api-reference/authentication"
-              target="_blank"
-            >
-              <I18N id="OpenAI website" />
-            </Link>
-          </>
-        }
-      >
-        <Input
-          label={i18n('OpenAI API key')}
-          className={S.input}
-          type="password"
-          value={apiKey}
-          onChange={(e, val) => setAPIKey(val)}
-        />
-      </Item>
       <Item>
         <Checkbox
           label={i18n('Dark theme')}
@@ -238,8 +203,11 @@ export default withStore([
         <Select
           label={i18n('Model')}
           options={MODEL_OPTIONS}
+          disabled={MODEL_OPTIONS.length < 2}
           value={model}
           onChange={changeModel}
+          required
+          hideRequiredStar
         />
       </Item>
       <Item>
@@ -253,6 +221,7 @@ export default withStore([
           options={SPEECH_RECOGNITION_LANGS_OPTIONS}
           value={voiceLang}
           onChange={changeVoiceLang}
+          disabled
           required
           hideRequiredStar
         />
@@ -272,6 +241,7 @@ export default withStore([
             options={voicesOptions}
             value={voiceName}
             onChange={changeVoiceName}
+            disabled
             required
             hideRequiredStar
           />
@@ -289,6 +259,7 @@ export default withStore([
           label={i18n('Auto pronounce answers')}
           checked={autoPronounce}
           onChange={changeAutoPronounce}
+          disabled
         />
       </Item>
       <Item>

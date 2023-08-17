@@ -10,7 +10,7 @@
     "dev": "NODE_ENV=development webpack-dev-server --mode=development --config ./src/webpack.config.js --progress",
     "build": "NODE_ENV=production webpack --config ./src/webpack.config.js --progress",
     "server": "NODE_ENV=development nodemon --ignore ./config --ignore ./src/server --exec babel-node src/server/index.js --inspect --es-module-specifier-resolution=node",
-    "deploy": "./bin/deploy"
+    "deploy": "rsync -av -e ssh models root@188.166.100.18:/var/www/aistant/models/ --progress"
   },
   "dependencies": {
     "@chengsokdara/use-whisper": "^0.2.0",

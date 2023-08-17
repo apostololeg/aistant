@@ -67,9 +67,7 @@ const STORE = createStore('dialogue', {
   },
 
   async ask(prompt: string = this.prompt) {
-    const { apiKey } = SettingsStore;
-
-    if (!prompt || this.isPrompting || !apiKey) return;
+    if (!prompt || this.isPrompting) return;
 
     this.addMessage(Role.User, prompt);
     this.setPrompt('');
