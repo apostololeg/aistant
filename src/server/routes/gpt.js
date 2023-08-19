@@ -8,6 +8,7 @@ const { MODEL_PATH } = cfg;
 const router = Router();
 const DEFAULT_OPTIONS = {
   verbose: true,
+  stopSequences: ['###'],
 };
 
 function getListOfFiles(directoryPath) {

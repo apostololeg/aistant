@@ -1,4 +1,5 @@
 import cn from 'classnames';
+
 import {
   LS,
   Input,
@@ -19,6 +20,10 @@ import { useEffect, useRef } from 'react';
 import Prompt from 'components/Prompt/Prompt';
 import { Token } from 'components/Token/Token';
 import { DateTime } from '@homecode/ui';
+
+const WS_URL = 'wss://ai.apostol.space';
+
+console.log('WS_URL', WS_URL);
 
 type Props = {
   store?: any;
@@ -66,24 +71,21 @@ const STORE = createStore('dialogue', {
     LS.set('model', model);
   },
 
-  async init() {
-    const { model } = this;
+  connectWS() {
+    this.ws = new WebSocket(WS_URL);
 
-    const response = await fetch(`/api/gpt/state`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
+    this.ws.onopen = () => {
+      console.log('WS open');
+    };
 
-    if (response.status !== 200) {
-      this.setError('Something went wrong');
-      return;
-    }
+    this.ws.onmessage = e => {
+      console.log('WS message', e.data);
+    };
+  },
 
-    const { usage } = await response.json();
-    const tokens = usage.total_tokens;
-
-    this.usedTokens += tokens;
-    LS.set('usedTokens', this.usedTokens);
+  disconnectWS() {
+    this.ws.close();
+    this.ws = null;
   },
 
   async ask(prompt: string = this.prompt) {
@@ -97,7 +99,7 @@ const STORE = createStore('dialogue', {
     try {
       const startedAt = Date.now();
       const modelName = SettingsStore.model;
-      const response = await fetch(`/api/gpt/prompt`, {
+      const response = await fetch('https://ai.apostol.space', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -165,6 +167,11 @@ export default withStore([
     const inner = listRef.current.innerElem;
     inner.scrollTo(0, inner.scrollHeight, { behavior: 'smooth' });
   }, [messages]);
+
+  useEffect(() => {
+    STORE.connectWS();
+    return () => STORE.disconnectWS();
+  }, []);
 
   return (
     <div className={S.root}>

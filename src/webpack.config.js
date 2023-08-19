@@ -228,6 +228,7 @@ export default (_env, argv) => {
       changeOrigin: true,
       logLevel: 'debug',
       target: `http://localhost:${envs.PORT}`,
+      ws: true,
     };
 
     Object.assign(config, {
