@@ -1,5 +1,5 @@
 import cn from 'classnames';
-
+import io from 'socket.io-client';
 import {
   LS,
   Input,
@@ -20,10 +20,6 @@ import { useEffect, useRef } from 'react';
 import Prompt from 'components/Prompt/Prompt';
 import { Token } from 'components/Token/Token';
 import { DateTime } from '@homecode/ui';
-
-const WS_URL = 'wss://ai.apostol.space';
-
-console.log('WS_URL', WS_URL);
 
 type Props = {
   store?: any;
@@ -72,20 +68,20 @@ const STORE = createStore('dialogue', {
   },
 
   connectWS() {
-    this.ws = new WebSocket(WS_URL);
+    this.socket = io();
 
-    this.ws.onopen = () => {
+    this.socket.on('open', () => {
       console.log('WS open');
-    };
+    });
 
-    this.ws.onmessage = e => {
+    this.socket.on('message', e => {
       console.log('WS message', e.data);
-    };
+    });
   },
 
   disconnectWS() {
-    this.ws.close();
-    this.ws = null;
+    this.socket.close();
+    this.socket = null;
   },
 
   async ask(prompt: string = this.prompt) {
@@ -99,7 +95,7 @@ const STORE = createStore('dialogue', {
     try {
       const startedAt = Date.now();
       const modelName = SettingsStore.model;
-      const response = await fetch('https://ai.apostol.space', {
+      const response = await fetch(BAKCEND_DOMAIN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
