@@ -17,6 +17,8 @@ import paths from './paths.js';
 const { parsed: envs } = dotenv.config();
 const pkg = require('../package.json');
 
+const DEFAULT_DOMAIN = 'http://localhost';
+
 export default (_env, argv) => {
   const isDev = argv.mode === 'development';
   const config = {
@@ -148,7 +150,9 @@ export default (_env, argv) => {
       new webpack.DefinePlugin({
         isDEV: JSON.stringify(isDev),
         VERSION: JSON.stringify(pkg.version),
-        DOMAIN: JSON.stringify(envs.DOMAIN || 'http://localhost'),
+        DOMAIN: JSON.stringify(envs.DOMAIN || DEFAULT_DOMAIN),
+        BAKCEND_DOMAIN: JSON.stringify(envs.BAKCEND_DOMAIN || DEFAULT_DOMAIN),
+
         PORT: JSON.stringify(envs.PORT || 4051),
       }),
 

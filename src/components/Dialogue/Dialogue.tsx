@@ -68,10 +68,11 @@ const STORE = createStore('dialogue', {
   },
 
   connectWS() {
-    this.socket = io();
+    this.socket = io('https://ai.apostol.space');
 
-    this.socket.on('open', () => {
-      console.log('WS open');
+    this.socket.on('connect', () => {
+      console.log('WS connect', this.socket.id);
+      this.socket.emit('message', 'Hello from client');
     });
 
     this.socket.on('message', e => {
@@ -95,7 +96,7 @@ const STORE = createStore('dialogue', {
     try {
       const startedAt = Date.now();
       const modelName = SettingsStore.model;
-      const response = await fetch(BAKCEND_DOMAIN, {
+      const response = await fetch(`${BAKCEND_DOMAIN}/api/gpt/prompt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

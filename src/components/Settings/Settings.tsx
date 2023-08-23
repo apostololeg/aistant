@@ -116,7 +116,7 @@ speechSynthesis.addEventListener('voiceschanged', () => {
   SettingsStore.updateVoicesList();
 });
 
-fetch('/api/gpt/state')
+fetch(`${BAKCEND_DOMAIN}/api/gpt/state`)
   .then(async response => response.json())
   .then(({ models, loaded }) => {
     SettingsStore.models.push(...models);
