@@ -68,7 +68,10 @@ const STORE = createStore('dialogue', {
   },
 
   connectWS() {
-    this.socket = io('https://ai.apostol.space');
+    this.socket = io('https://ai.apostol.space', {
+      rejectUnauthorized: false,
+      secure: true,
+    });
 
     this.socket.on('connect', () => {
       console.log('WS connect', this.socket.id);
