@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import io from 'socket.io-client';
+import { io } from 'socket.io-client';
 import {
   LS,
   Input,
