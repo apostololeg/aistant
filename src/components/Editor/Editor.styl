@@ -1,0 +1,47 @@
+.root
+  position relative
+  display flex
+  flex-grow 1
+  flex-direction column
+  overflow hidden
+  margin-bottom var(--indent-m)
+  // margin 20px 0
+  // border 1px solid var(--accent-color-alpha-50)
+  // border-radius 6px
+
+.fullscreen
+  z-index 10
+  position fixed
+  top 0
+  left 0
+  right 0
+  bottom 0
+  background-color var(--decent-color)
+
+  .toolbar
+    padding var(--indent-s)
+
+.editor
+  position relative
+  display flex
+  flex-grow 1
+  overflow-y auto
+  margin-bottom 10px
+  // postStyles()
+
+  & > div:nth-child(1) // .ql-editor
+    flex-grow 1
+    padding 0 10px 30px
+
+  & > div:nth-child(2) // .ql-clipboard
+    display none
+
+.toolbarAddons
+  margin-left 10px
+
+.fullscreenButton
+  border-radius 50%
+  background-color var(--decent-color-alpha-900)
+
+  svg
+    transform scale(1.5)

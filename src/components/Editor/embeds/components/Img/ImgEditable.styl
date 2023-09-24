@@ -1,0 +1,27 @@
+.root
+  position relative
+  display inline-flex
+  align-items center
+  justify-content center
+  margin-right 6px
+  border-radius var(--indent-s)
+  background-color var(--accent-color-alpha-100)
+
+  &:hover
+    z-index 1
+    box-shadow 0 0 0 2px var(--active-color-alpha-500)
+    background-color var(--active-color-alpha-100)
+
+  & > input
+    cursor pointer
+    position absolute
+    height 100%
+    width 100%
+    opacity 0
+
+.progress
+  position absolute
+  top 0
+  left 0
+  height 100%
+  width 0

@@ -1,5 +1,4 @@
 import cn from 'classnames';
-import { io } from 'socket.io-client';
 import {
   LS,
   Input,
@@ -13,13 +12,14 @@ import {
 } from '@homecode/ui';
 import { createStore, withStore } from 'justorm/react';
 
+import { DateTime } from '@homecode/ui';
 import Settings, { SettingsStore } from 'components/Settings/Settings';
+import Prompt from 'components/Prompt/Prompt';
+import { Token } from 'components/Token/Token';
+import ws from 'stores/ws';
 
 import S from './Dialogue.styl';
 import { useEffect, useRef } from 'react';
-import Prompt from 'components/Prompt/Prompt';
-import { Token } from 'components/Token/Token';
-import { DateTime } from '@homecode/ui';
 
 type Props = {
   store?: any;
@@ -38,6 +38,7 @@ type Message = {
 };
 
 // const initialMessages: Message[] = [];
+// @ts-ignore
 const initialMessages: Message[] = LS.get('messages') || [];
 
 const STORE = createStore('dialogue', {
@@ -67,27 +68,6 @@ const STORE = createStore('dialogue', {
     LS.set('model', model);
   },
 
-  connectWS() {
-    this.socket = io('https://ai.apostol.space', {
-      rejectUnauthorized: false,
-      secure: true,
-    });
-
-    this.socket.on('connect', () => {
-      console.log('WS connect', this.socket.id);
-      this.socket.emit('message', 'Hello from client');
-    });
-
-    this.socket.on('message', e => {
-      console.log('WS message', e.data);
-    });
-  },
-
-  disconnectWS() {
-    this.socket.close();
-    this.socket = null;
-  },
-
   async ask(prompt: string = this.prompt) {
     if (!prompt || this.isPrompting) return;
 
@@ -99,7 +79,22 @@ const STORE = createStore('dialogue', {
     try {
       const startedAt = Date.now();
       const modelName = SettingsStore.model;
-      const response = await fetch(`${BAKCEND_DOMAIN}/api/gpt/prompt`, {
+
+      ws.socket.emit(
+        'prompt',
+        JSON.stringify({
+          messages: [
+            {
+              role: 'user',
+              content: prompt,
+            },
+          ], // save tokens
+          // options: { temp: .5, verbose: true }
+          modelName,
+        })
+      );
+
+      const response = await fetch(`${BAKCEND_DOMAIN}/api/core/completition`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -168,11 +163,6 @@ export default withStore([
     inner.scrollTo(0, inner.scrollHeight, { behavior: 'smooth' });
   }, [messages]);
 
-  useEffect(() => {
-    STORE.connectWS();
-    return () => STORE.disconnectWS();
-  }, []);
-
   return (
     <div className={S.root}>
       <div className={S.header}>
@@ -200,6 +190,8 @@ export default withStore([
         y
         // className={S.messages}
         offset={{ y: { before: 70, after: 100 } }}
+        // @ts-ignore
+        // innerProps={{ ref: listRef }}
         ref={listRef}
       >
         {messages.map(({ role, content, duration }) => (

@@ -6,6 +6,7 @@ import { i18n } from 'tools/i18n';
 import RequestButton from 'components/RequestButton/RequestButton';
 
 import S from './Prompt.styl';
+import Editor from 'components/Editor/Editor';
 
 export default withStore({
   dialogue: ['error', 'prompt', 'isPrompting'],
@@ -15,7 +16,7 @@ export default withStore({
   const onTyping = (e, val) => dialogue.setPrompt(val);
   const onTransciption = txt => dialogue.setPrompt(txt);
 
-  const onKeyPress = e => {
+  const onKeyUp = e => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey || e.shiftKey)) {
       onSubmit(e);
     }
@@ -53,14 +54,14 @@ export default withStore({
           {error}
         </AssistiveText>
       )}
-      <Input
+      <Editor
         className={S.input}
         size="l"
         type="textarea"
         placeholder="Ask me..."
         onChange={onTyping}
         addonRight={<div className={S.buttonsPlaceholder} />}
-        onKeyPress={onKeyPress}
+        onKeyUp={onKeyUp}
         value={prompt}
         // hasClear
       />
