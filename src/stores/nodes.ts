@@ -2,21 +2,31 @@ import { createStore } from 'justorm/react';
 import { LS } from '@homecode/ui';
 import ws from 'stores/ws';
 
-export default createStore('nodes', {
+const STORE = createStore('nodes', {
   // @ts-ignore
   nodes: new Set(LS.get('nodes')),
 
   async loadNodes() {
     console.log('### loadNodes');
 
-    ws.socket.emit('nodes', {});
-    ws.socket.on('nodes', nodes => {
+    ws.socket.once('nodes', nodes => {
+      console.log('nodes', nodes);
       this.nodes = new Set(JSON.parse(nodes));
       LS.set('nodes', [...this.nodes.originalObject]);
     });
+
+    ws.socket.emit('nodes', {});
   },
 
-  addNode(node) {
+  createNode() {
+    ws.socket.once('create_node', node => {
+      this.addNode(node);
+    });
+
+    ws.socket.emit('create_node', {});
+  },
+
+  addNode(node = {}) {
     this.nodes.add(node);
   },
 
@@ -24,3 +34,5 @@ export default createStore('nodes', {
     this.nodes.remove(node);
   },
 });
+
+export default STORE;

@@ -5,8 +5,9 @@ export default createStore('ws', {
   socket: null,
   connect(cb) {
     this.socket = io('https://ai.apostol.space', {
+      transports: ['websocket', 'polling'],
       rejectUnauthorized: false,
-      secure: true,
+      // secure: true,
     });
 
     this.socket.on('connect', () => {

@@ -20,6 +20,8 @@ const pkg = require('../package.json');
 const DEFAULT_DOMAIN = 'http://localhost';
 
 export default (_env, argv) => {
+  console.log('argv.mode', argv.mode);
+
   const isDev = argv.mode === 'development';
   const config = {
     entry: `${paths.src}/index.tsx`,

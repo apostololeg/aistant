@@ -10,6 +10,7 @@ import {
   AssistiveText,
   Scroll,
   LS,
+  RouterStore,
 } from '@homecode/ui';
 
 import { getThemeConfig } from 'tools/theme';
@@ -59,6 +60,7 @@ export const SettingsStore = createStore('settings', {
   updater: null as any,
   setUpdater(updater) {
     this.updater = () => {
+      RouterStore.go('/');
       updater();
       this.updater = null;
     };
