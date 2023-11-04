@@ -1,0 +1,118 @@
+.root
+  position relative
+  padding var(--indent-s)
+  border-radius var(--indent-s)
+  box-shadow inset 0 0 0 1px var(--accent-color-alpha-50)
+  transition box-shadow .2s ease-out
+
+  &:hover
+    box-shadow inset 0 0 0 1px var(--accent-color-alpha-100)
+
+
+.isDragging
+  user-select none
+
+.preview
+  max-width 50vw
+  // padding var(--indent-s) var(--indent-m)
+  margin var(--indent-s)
+
+.editor
+  padding 100px
+
+.type-text
+  background-color rgba(100,100,100,0.2);
+.type-table
+  background-color rgba(74,170,118,0.2);
+.type-function
+  background-color rgba(196,193,34,0.2);
+.type-view
+  background-color rgba(119,70,175,0.2);
+
+.id
+  font-size 60%
+  position absolute
+  top 4px
+  left 6px
+  opacity .5
+
+.header
+  position relative
+  display flex
+  align-items center
+  justify-content space-between
+  margin-bottom var(--indent-s)
+
+  &.changed::after
+    content ''
+    position absolute
+    right -14px
+    top -14px
+    width 10px
+    height 10px
+    border-radius 50%
+    border 1px solid var(--decent-color-alpha-500)
+    background-color var(--warning-color)
+    animation pulseShadow 3s ease-in-out infinite
+
+.editButton
+  border-radius 50%
+  margin-left var(--indent-s)
+  margin-right -10px
+  opacity 0
+  transition opacity .2s ease-out
+
+  .root:hover &
+    opacity 1
+
+@keyframes pulseShadow
+  0%
+    box-shadow 0 0 0 0 var(--warning-color-alpha-300)
+  30%
+    box-shadow 0 0 0 10px transparent
+  100%
+    box-shadow 0 0 0 0 transparent
+
+.name
+  flex 1
+
+  .preview &
+    font-weight bold
+
+.type
+  width 100%
+
+.link
+  margin-left var(--indent-s)
+  border-radius 50%
+  opacity .5
+
+  .root:hover &
+    opacity 1
+
+.data
+  // box-shadow 0 0 0 1px var(--accent-color-alpha-50)
+  max-height calc(100vh)
+
+.footer
+  display flex
+  flex-wrap wrap
+  align-items center
+  justify-content space-between
+  margin-top var(--indent-s)
+
+.outputButton
+  margin-right var(--indent-s)
+  // height 5vh
+  // width 5vh
+  // border-radius 50%
+  // box-shadow 0 0 0 1px var(--accent-color-alpha-50)
+
+.submitButtons
+  margin 0 0 0 var(--indent-s)
+
+  button
+    margin-top 0
+
+// .runButton
+  // margin-right var(--indent-m)

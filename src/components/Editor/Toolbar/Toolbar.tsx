@@ -60,9 +60,9 @@ class Toolbar extends Component<Props> {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!this.hasUserSelection && length > 0) {
-      editor.setSelection(index, length);
-    }
+    // if (!this.hasUserSelection && length > 0) {
+    //   editor.setSelection(index, length);
+    // }
 
     action({ editor, format, selection });
   };
@@ -79,9 +79,10 @@ class Toolbar extends Component<Props> {
   updateSelection = () => {
     const { editor, tools } = this.props;
     const userSelection = editor.getSelection();
-    const selection = this.hasUserSelection
-      ? userSelection
-      : tools.getWordSelection();
+    const selection = userSelection;
+    // this.hasUserSelection
+    //   ? userSelection
+    //   : tools.getWordSelection();
 
     this.hasUserSelection = userSelection?.length > 0;
     this.setState({ selection });
@@ -89,7 +90,11 @@ class Toolbar extends Component<Props> {
 
   updateFormat = () => {
     const { editor } = this.props;
-    const { index, length } = this.state.selection;
+    const { selection } = this.state;
+
+    if (!selection) return;
+
+    const { index, length } = selection;
     const format = editor.getFormat(index, length);
 
     this.setState({ format });

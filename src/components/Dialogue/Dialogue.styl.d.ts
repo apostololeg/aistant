@@ -2,7 +2,6 @@
 // Please do not change this file!
 interface CssExports {
   'duration': string;
-  'fadeToDefaultColorOnce': string;
   'hasUpdates': string;
   'header': string;
   'message': string;

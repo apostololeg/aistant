@@ -1,37 +1,90 @@
 import { createStore } from 'justorm/react';
-import { LS } from '@homecode/ui';
+import { LS, array } from '@homecode/ui';
+
+import { EVENT_TYPES } from 'types';
+import type { Node } from 'types/node';
 import ws from 'stores/ws';
 
+const UPDATE_RESOLVERS = {};
+
 const STORE = createStore('nodes', {
-  // @ts-ignore
-  nodes: new Set(LS.get('nodes')),
+  ids: [] as string[],
+  byId: {},
+  selectedId: null,
+  run: null,
 
-  async loadNodes() {
-    console.log('### loadNodes');
+  setSelected(nodeId = null) {
+    if (this.selectedId === nodeId) return;
 
-    ws.socket.once('nodes', nodes => {
-      console.log('nodes', nodes);
-      this.nodes = new Set(JSON.parse(nodes));
-      LS.set('nodes', [...this.nodes.originalObject]);
-    });
-
-    ws.socket.emit('nodes', {});
+    this.selectedId = nodeId;
   },
 
-  createNode() {
-    ws.socket.once('create_node', node => {
-      this.addNode(node);
-    });
-
-    ws.socket.emit('create_node', {});
+  /**
+   * Create new node
+   */
+  createNode(nodeTemplate: Partial<Node> = {}) {
+    ws.getSocket().emit(EVENT_TYPES.CREATE_NODE, { ...nodeTemplate });
   },
 
-  addNode(node = {}) {
-    this.nodes.add(node);
+  /**
+   * Update node on server
+   */
+  updateNode(id, dto) {
+    const socket = ws.getSocket();
+
+    return new Promise(resolve => {
+      socket.emit(EVENT_TYPES.UPDATE_NODE, { id, ...dto });
+      UPDATE_RESOLVERS[id] = resolve;
+    });
+  },
+
+  addNode(node) {
+    array.addUniq(this.ids, node.id);
+    this.byId[node.id] = node;
+
+    this.saveToLS();
   },
 
   removeNode(node) {
-    this.nodes.remove(node);
+    array.spliceWhere(this.ids, node.id);
+    delete this.byId[node.id];
+
+    this.saveToLS();
+  },
+
+  // Save nodes data and ids list to local storage
+  saveToLS() {
+    LS.set('byId', { ...this.byId.originalObject });
+    LS.set('ids', this.ids);
+  },
+
+  /**
+   * Reveived state from server
+   */
+  onInit(nodes) {
+    nodes
+      .sort((a, b) => a.id - b.id)
+      .forEach(node => {
+        if (!this.byId[node.id]) this.addNode(node);
+      });
+
+    this.saveToLS();
+  },
+
+  onCreated(node) {
+    this.addNode(node);
+    this.saveToLS();
+  },
+
+  onUpdated(node) {
+    const { id } = node;
+
+    this.addNode(node);
+
+    UPDATE_RESOLVERS[id]?.(node);
+    delete UPDATE_RESOLVERS[id];
+
+    this.saveToLS();
   },
 });
 

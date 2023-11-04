@@ -1,0 +1,33 @@
+.root
+  width auto
+  border-radius 5px
+  border-radius var(--indent-s)
+  margin 0
+
+.form
+  display none
+
+.field
+  width 100%
+
+.selectTrigger
+  overflow ellipsis
+  white-space nowrap
+
+.footer
+  display flex
+  justify-content flex-end
+
+.opened
+  width calc(100% + 8px)
+  min-width @width
+  padding 4px
+  margin -4px
+  margin-top var(--indent-s)
+  background-color var(--decent-color-alpha-200)
+
+  .form
+    display block
+
+  .footer
+    margin-top 10px

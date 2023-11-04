@@ -1,28 +1,44 @@
 import { io } from 'socket.io-client';
 import { createStore } from 'justorm/react';
 
-export default createStore('ws', {
-  socket: null,
-  connect(cb) {
-    this.socket = io('https://ai.apostol.space', {
+// const WS_URL = 'https://ai.apostol.space';
+
+let socket = null;
+const CONNECTION_RESOLVERS = new Set<(socket: any) => void>();
+
+const STORE = createStore('ws', {
+  isConnected: false,
+
+  getSocket() {
+    return socket;
+  },
+
+  connect() {
+    socket = io(BAKCEND_DOMAIN, {
       transports: ['websocket', 'polling'],
       rejectUnauthorized: false,
       // secure: true,
     });
 
-    this.socket.on('connect', () => {
-      console.log('WS connect', this.socket.id);
-      cb?.(this.socket);
-      // this.socket.emit('message', 'Hello from client');
+    socket.on('connect', () => {
+      this.isConnected = true;
+      CONNECTION_RESOLVERS.forEach(resolve => resolve(socket));
+      CONNECTION_RESOLVERS.clear();
     });
+  },
 
-    this.socket.on('message', msg => {
-      console.log('WS message', msg);
+  connected() {
+    if (socket) return Promise.resolve(socket);
+
+    return new Promise(resolve => {
+      CONNECTION_RESOLVERS.add(resolve);
     });
   },
 
   disconnect() {
-    this.socket.close();
-    this.socket = null;
+    socket.close();
+    socket = null;
   },
 });
+
+export default STORE;

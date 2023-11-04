@@ -10,11 +10,20 @@ import Toolbar from './Toolbar/Toolbar';
 import Tools from './tools';
 
 import S from './Editor.styl';
-import { hydrateComponents, bus, removeAllChildNodes } from './Editor.helpers';
+import {
+  hydrateComponents,
+  bus,
+  removeAllChildNodes,
+  selectInputText,
+} from './Editor.helpers';
 import PostRenderHelpers from './PostRenderHelpers';
 
+// const Parchment = Quill.import('parchment');
+
 type Props = {
+  className?: string;
   store?: any;
+  readOnly?: boolean;
   value: string;
   onChange?: (value: string) => void;
   toolbarAddons?: ReactNode;
@@ -34,16 +43,23 @@ export default class Editor extends Component<Props> {
   };
 
   componentDidMount() {
-    const { value } = this.props;
+    const { value, readOnly } = this.props;
 
     this.editor = new Quill('#editor');
     this.tools = new Tools(this.editor, Quill);
     this.domParser = new DOMParser();
 
+    // @ts-ignore
+    window.editor = this.editor;
+
+    if (readOnly) this.editor.enable(false);
+
     this.setValue(value);
     this.setState({ showToolbar: true });
 
     this.editor.on('editor-change', this.onChange);
+    this.editor.on('selection-change', this.onSelectionChange);
+    // window.addEventListener('keydown', this.onSelectionChange);
 
     bus.addEventListener('change', this.onChange);
   }
@@ -68,10 +84,14 @@ export default class Editor extends Component<Props> {
     this.editor.off('editor-change', this.onChange);
   }
 
-  hydrateComponents = debounce(
-    () => hydrateComponents(this.editor.root, { isEditor: true }),
-    500
-  );
+  hydrateComponents = //debounce(
+    () =>
+      hydrateComponents(this.editor.root, {
+        isEditor: true,
+        onChange: this.onChange,
+      });
+  // 50
+  // );
 
   setValue = value => {
     this.editor.root.innerHTML = value;
@@ -88,6 +108,20 @@ export default class Editor extends Component<Props> {
     });
 
     return tree.innerHTML;
+  };
+
+  onSelectionChange = (range, prevRange) => {
+    if (!range || range.index === prevRange?.index) return;
+
+    const dir = !prevRange ? 0 : range.index < prevRange?.index ? -1 : 1;
+    const blot = this.editor.getLeaf(range.index + dir)[0];
+    const input = blot?.domNode?.querySelector?.('[contenteditable=true]');
+
+    if (!input) return;
+
+    console.log('onSelectionChange', input);
+    input.focus();
+    Time.after(50, () => selectInputText(input));
   };
 
   onChange = () => {

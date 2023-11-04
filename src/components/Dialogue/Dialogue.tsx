@@ -1,7 +1,5 @@
 import cn from 'classnames';
 import {
-  LS,
-  Input,
   Button,
   AssistiveText,
   Icon,
@@ -12,11 +10,9 @@ import {
 } from '@homecode/ui';
 import { createStore, withStore } from 'justorm/react';
 
-import { DateTime } from '@homecode/ui';
 import Settings, { SettingsStore } from 'components/Settings/Settings';
-import Prompt from 'components/Prompt/Prompt';
 import { Token } from 'components/Token/Token';
-import ws from 'stores/ws';
+import NodesEditor from 'components/NodesEditor/NodesEditor';
 
 import S from './Dialogue.styl';
 import { useEffect, useRef } from 'react';
@@ -26,132 +22,15 @@ type Props = {
   question: string;
 };
 
-enum Role {
-  User = 'user',
-  Assistant = 'assistant',
-}
-
-type Message = {
-  role: Role;
-  content: string;
-  duration?: number;
-};
-
-// const initialMessages: Message[] = [];
-// @ts-ignore
-const initialMessages: Message[] = LS.get('messages') || [];
-
-const STORE = createStore('dialogue', {
-  messages: initialMessages,
-  usedTokens: LS.get('usedTokens') || 0,
-
-  prompt: LS.get('prompt') || '',
-  error: '',
-  isPrompting: false,
-
-  setPrompt(prompt: string) {
-    this.prompt = prompt;
-    LS.set('prompt', prompt);
-  },
-
-  setError(error: string) {
-    this.error = error;
-  },
-
-  addMessage(role: Role, content: string, duration?: number) {
-    this.messages.push({ role, content, duration });
-    LS.set('messages', this.messages);
-  },
-
-  changeModel(model: string) {
-    this.model = model;
-    LS.set('model', model);
-  },
-
-  async ask(prompt: string = this.prompt) {
-    if (!prompt || this.isPrompting) return;
-
-    this.addMessage(Role.User, prompt);
-    this.setPrompt('');
-    this.setError('');
-    this.isPrompting = true;
-
-    try {
-      const startedAt = Date.now();
-      const modelName = SettingsStore.model;
-
-      ws.socket.emit(
-        'prompt',
-        JSON.stringify({
-          messages: [
-            {
-              role: 'user',
-              content: prompt,
-            },
-          ], // save tokens
-          // options: { temp: .5, verbose: true }
-          modelName,
-        })
-      );
-
-      const response = await fetch(`${BAKCEND_DOMAIN}/api/core/completition`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: this.messages.slice(-5), // save tokens
-          // options: { temp: .5 }
-          modelName,
-        }),
-      });
-      const duration = Date.now() - startedAt;
-
-      const { choices, usage } = await response.json();
-      const tokens = usage.total_tokens;
-
-      if (response.status !== 200) {
-        this.setError('Something went wrong');
-        return;
-      }
-
-      this.usedTokens += tokens;
-      LS.set('usedTokens', this.usedTokens);
-      const { role, content } = choices[0].message;
-
-      this.addMessage(role as Role, content, duration);
-
-      SettingsStore.loadedModels[modelName] = true;
-
-      const { autoPronounce, voiceLang, voiceName } = SettingsStore;
-
-      if (autoPronounce && voiceName) {
-        const utterance = new SpeechSynthesisUtterance(content);
-        utterance.lang = voiceLang;
-        speechSynthesis.speak(utterance);
-      }
-    } finally {
-      this.isPrompting = false;
-    }
-  },
-
-  clearHistory() {
-    this.messages = [];
-    LS.set('messages', this.messages);
-  },
-});
-
 export default withStore([
   'dialogue',
   {
     router: 'path',
     settings: 'updater',
   },
-])(function Dialogue({
-  store: {
-    dialogue: { messages, usedTokens },
-    settings: { updater },
-    router,
-  },
-}: Props) {
+])(function Dialogue({ store: { dialogue, settings, router } }: Props) {
+  const { updater } = settings;
+  const { messages, usedTokens } = dialogue;
   const { path } = router;
 
   const listRef = useRef<HTMLDivElement>(null);
@@ -170,7 +49,7 @@ export default withStore([
         <div>
           <Button
             variant="clear"
-            onClick={STORE.clearHistory}
+            onClick={dialogue.clearHistory}
             title="Clear chat"
           >
             <Icon size="l" type="draft" />
@@ -206,14 +85,12 @@ export default withStore([
         ))}
       </Scroll>
 
-      <Prompt />
-
       <Router>
         <Route path="/settings" component={() => null} />
       </Router>
 
       <LightBox isOpen={path === '/settings'} onClose={router.back} blur>
-        <Settings onClearHistory={STORE.clearHistory} />
+        <Settings onClearHistory={dialogue.clearHistory} />
       </LightBox>
     </div>
   );

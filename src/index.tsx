@@ -1,12 +1,12 @@
-import { createRoot } from 'react-dom/client';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+
+import App from 'components/App/App';
 
 if (!isDEV) {
-  import('pwa');
+  import('./pwa');
 }
 
-import App from './components/App/App';
+const root = ReactDOM.createRoot(document.getElementById('app-root'));
 
-const elem = document.getElementById('app-root') as HTMLElement;
-const root = createRoot(elem);
-
-root.render(<App />);
+root.render(React.createElement(App));

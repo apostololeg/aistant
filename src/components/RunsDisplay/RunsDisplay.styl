@@ -1,0 +1,36 @@
+.root
+  position fixed
+  bottom var(--indent-m)
+  right var(--indent-m)
+  padding var(--indent-s)
+  border-radius var(--indent-s)
+  background-color var(--decent-color)
+  box-shadow inset 0 0 0 1px var(--accent-color-alpha-100), 0 0 10px 0 var(--decent-color-alpha-500)
+
+.run
+  position relative
+  animation progress 1s infinite
+  border-radius var(--indent-s)
+  padding var(--indent-s)
+
+  &.complete
+    animation none
+
+  & + &
+    margin-top var(--indent-m)
+
+    &::before
+      content ''
+      position absolute
+      height 1px
+      width 100%
+      background-color var(--accent-color-alpha-100)
+      top calc(-0.5 * var(--indent-m))
+
+@keyframes progress
+  0%
+    background-color var(--accent-color-alpha-100)
+  50%
+    background-color var(--accent-color-alpha-200)
+  100%
+    background-color var(--accent-color-alpha-100)
