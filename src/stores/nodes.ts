@@ -1,37 +1,53 @@
 import { createStore } from 'justorm/react';
-import { LS } from '@homecode/ui';
+import { LS, array } from '@homecode/ui';
+
+import type { Node } from 'types/node';
 import ws from 'stores/ws';
 
 const STORE = createStore('nodes', {
-  // @ts-ignore
-  nodes: new Set(LS.get('nodes')),
+  items: [],
+  byId: {},
 
   async loadNodes() {
     console.log('### loadNodes');
 
-    ws.socket.once('nodes', nodes => {
-      console.log('nodes', nodes);
-      this.nodes = new Set(JSON.parse(nodes));
-      LS.set('nodes', [...this.nodes.originalObject]);
-    });
+    const socket = ws.getSocket();
 
-    ws.socket.emit('nodes', {});
+    socket.emit('nodes', {});
+    socket.once('nodes', this.onNodes.bind(this));
   },
 
-  createNode() {
-    ws.socket.once('create_node', node => {
+  // Reveived fresh list of nodes from server
+  onNodes(nodes) {
+    console.log('nodes', nodes);
+
+    nodes.forEach(node => {
+      if (!this.byId[node.id]) this.addNode(node);
+    });
+
+    LS.set('nodes', [...this.items.originalObject]);
+  },
+
+  // Create new node
+  createNode(nodeTemplate: Partial<Node>) {
+    const socket = ws.getSocket();
+
+    socket.emit('create_node', { ...nodeTemplate });
+    socket.once('create_node', node => {
+      // node created, add it to the list
       this.addNode(node);
     });
-
-    ws.socket.emit('create_node', {});
   },
 
-  addNode(node = {}) {
-    this.nodes.add(node);
+  addNode(node) {
+    array.addUniq(this.items, node, 'id');
+    // @ts-ignore
+    if (node.id) this.byId[node.id] = node;
   },
 
   removeNode(node) {
-    this.nodes.remove(node);
+    array.spliceWhere(this.items, node, 'id');
+    delete this.byId[node.id];
   },
 });
 

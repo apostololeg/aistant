@@ -1,6 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { withStore } from 'justorm/react';
 import { Select } from '@homecode/ui';
+
+import { updateProps } from '../../helpers';
+import S from './Tag.styl';
 
 type Props = {
   nodeId?: string;
@@ -11,8 +14,12 @@ const ACTIONS = {
   NEW_NODE: 'new_node',
 };
 
-export const Tag = withStore('nodes')(function Tag({ nodeId, store }: Props) {
-  const nodes = [...store.nodes.nodes.originalObject.values()];
+export const Tag = withStore({ nodes: ['nodes'] })(function Tag({
+  nodeId,
+  store,
+}: Props) {
+  const nodes = [...store.nodes.items.originalObject];
+  const ref = useRef(null);
 
   const allNodesOptoins = useMemo(() => {
     const nodesOptions = nodes.map(n => ({ id: n.id, label: n.name }));
@@ -21,23 +28,29 @@ export const Tag = withStore('nodes')(function Tag({ nodeId, store }: Props) {
     return [...nodesOptions, ...actionsOptions];
   }, [nodes]);
 
-  const onChange = (value: any) => {
-    console.log('onChange', value);
+  const onChange = (nodeId: any) => {
+    console.log('onChange', nodeId);
 
-    if (value === ACTIONS.NEW_NODE) {
-      store.nodes.createNode();
+    if (nodeId === ACTIONS.NEW_NODE) {
+      store.nodes.createNode({ name: nodeId });
       return;
     }
+
+    updateProps(ref.current.rootElem.current, { nodeId });
   };
 
   return (
     <Select
-      size="m"
+      className={S.root}
+      size="s"
       isSearchable
       options={allNodesOptoins}
+      value={nodeId}
       onChange={onChange}
-      popupProps={{ isOpen: true }}
+      popupProps={{ ref }}
       inputProps={{ placeholder: 'type node name...' }}
+      required
+      hideRequiredStar
     />
   );
 });

@@ -88,7 +88,7 @@ export class SpeechToText {
 
   //   try {
   //     console.time('whisper-api-call');
-  //     const response = await fetch(`http://localhost:${PORT}/api/whisper`, {
+  //     const response = await fetch(`/api/whisper`, {
   //       method: 'POST',
   //       headers: {
   //         Authorization: `Bearer ${OPENAI_API_KEY}`,

@@ -14,6 +14,7 @@ import { hydrateComponents, bus, removeAllChildNodes } from './Editor.helpers';
 import PostRenderHelpers from './PostRenderHelpers';
 
 type Props = {
+  className?: string;
   store?: any;
   value: string;
   onChange?: (value: string) => void;

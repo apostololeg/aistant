@@ -94,15 +94,15 @@ const STORE = createStore('dialogue', {
         })
       );
 
-      const response = await fetch(`${BAKCEND_DOMAIN}/api/core/completition`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: this.messages.slice(-5), // save tokens
-          // options: { temp: .5 }
-          modelName,
-        }),
-      });
+      // const response = await fetch(`${BAKCEND_DOMAIN}/api/core/completition`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     messages: this.messages.slice(-5), // save tokens
+      //     // options: { temp: .5 }
+      //     modelName,
+      //   }),
+      // });
       const duration = Date.now() - startedAt;
 
       const { choices, usage } = await response.json();

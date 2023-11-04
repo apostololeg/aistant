@@ -13,7 +13,7 @@ export default withStore({
 })(function Prompt({ store: { dialogue } }) {
   const { error, prompt, isPrompting } = dialogue;
 
-  const onTyping = (e, val) => dialogue.setPrompt(val);
+  const onTyping = val => dialogue.setPrompt(val);
   const onTransciption = txt => dialogue.setPrompt(txt);
 
   const onKeyUp = e => {
@@ -24,7 +24,7 @@ export default withStore({
 
   const onRequest = () => dialogue.ask();
   const onSubmit = e => {
-    speechSynthesis.cancel();
+    // speechSynthesis.cancel();
     e.preventDefault();
     dialogue.ask();
   };
@@ -56,12 +56,12 @@ export default withStore({
       )}
       <Editor
         className={S.input}
-        size="l"
-        type="textarea"
-        placeholder="Ask me..."
+        // size="l"
+        // type="textarea"
+        // placeholder="Ask me..."
         onChange={onTyping}
-        addonRight={<div className={S.buttonsPlaceholder} />}
-        onKeyUp={onKeyUp}
+        // addonRight={<div className={S.buttonsPlaceholder} />}
+        // onKeyUp={onKeyUp}
         value={prompt}
         // hasClear
       />
