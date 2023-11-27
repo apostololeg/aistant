@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 
 import { Tag } from './embeds/components/Tag/Tag';
 
@@ -13,6 +13,36 @@ const EDITABLE_COMPONENTS = {
   // Img: ImgEditable,
 };
 
+const NODE_TO_RENDER_ROOT = new WeakMap();
+
+function getNodeRoot(node) {
+  if (NODE_TO_RENDER_ROOT.has(node)) {
+    return NODE_TO_RENDER_ROOT.get(node);
+  }
+
+  const root = createRoot(node);
+
+  NODE_TO_RENDER_ROOT.set(node, root);
+
+  return root;
+}
+
+export function selectInputText(node) {
+  let sel, range;
+
+  if (window.getSelection && document.createRange) {
+    range = document.createRange();
+    range.selectNodeContents(node);
+    sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else if (document.body.createTextRange) {
+    range = document.body.createTextRange();
+    range.moveToElementText(node);
+    range.select();
+  }
+}
+
 export function hydrateComponents(rootNode, { isEditor } = {}) {
   const nodes = rootNode.querySelectorAll('[data-props]:not([data-inited])');
 
@@ -24,7 +54,8 @@ export function hydrateComponents(rootNode, { isEditor } = {}) {
 
     if (C) {
       node.innerHTML = '';
-      ReactDOM.render(<C {...props} />, node);
+      const root = getNodeRoot(node);
+      root.render(<C {...props} />);
       node.setAttribute('data-inited', '');
     }
   });

@@ -53,6 +53,7 @@ export default (_env, argv) => {
         {
           test: /\.(j|t)sx?$/,
           // loader: 'babel-loader',
+          // include: /node_modules\/(?!@homecode\/ui)/,
           use: [
             {
               loader: require.resolve('babel-loader'),

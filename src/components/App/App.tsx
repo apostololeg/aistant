@@ -1,13 +1,13 @@
+import { useEffect } from 'react';
 import { withStore } from 'justorm/react';
 import { VH, Theme, dom } from '@homecode/ui';
 
 import 'tools/i18n';
 import 'stores';
 import ws from 'stores/ws';
+import NodesEditor from 'components/NodesEditor/NodesEditor';
 
 import S from './App.styl';
-import Dialogue from 'components/Dialogue/Dialogue';
-import { useEffect } from 'react';
 
 dom.watchControllerFlag();
 
@@ -31,7 +31,7 @@ export default withStore({ settings: 'isDarkTheme', nodes: [] })(function App({
       <VH />
       <Theme config={currThemeConfig} />
 
-      <Dialogue />
+      <NodesEditor />
     </div>
   );
 });

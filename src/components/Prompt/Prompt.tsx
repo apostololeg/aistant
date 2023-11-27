@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { withStore } from 'justorm/react';
+import cn from 'classnames';
 import { AssistiveText, Input, Button, Icon } from '@homecode/ui';
 
 import { i18n } from 'tools/i18n';
@@ -10,7 +11,7 @@ import Editor from 'components/Editor/Editor';
 
 export default withStore({
   dialogue: ['error', 'prompt', 'isPrompting'],
-})(function Prompt({ store: { dialogue } }) {
+})(function Prompt({ onSubmit, store: { dialogue } }) {
   const { error, prompt, isPrompting } = dialogue;
 
   const onTyping = val => dialogue.setPrompt(val);
@@ -20,13 +21,6 @@ export default withStore({
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey || e.shiftKey)) {
       onSubmit(e);
     }
-  };
-
-  const onRequest = () => dialogue.ask();
-  const onSubmit = e => {
-    // speechSynthesis.cancel();
-    e.preventDefault();
-    dialogue.ask();
   };
 
   const buttons = useMemo(() => {
@@ -39,21 +33,16 @@ export default withStore({
     }
     return (
       <>
-        <RequestButton onResult={onTransciption} onComplete={onRequest} />
+        <RequestButton onResult={onTransciption} onComplete={onSubmit} />
         <Button variant="clear" type="submit">
           <Icon size="l" type="send" />
         </Button>
       </>
     );
-  }, [isPrompting, onTransciption, onRequest]);
+  }, [isPrompting, onTransciption, onsubmit]);
 
   return (
-    <form onSubmit={onSubmit} className={S.root}>
-      {error && (
-        <AssistiveText variant="danger" className={S.error}>
-          {error}
-        </AssistiveText>
-      )}
+    <div className={cn(S.root, error && S.error)} onKeyUp={onKeyUp}>
       <Editor
         className={S.input}
         // size="l"
@@ -66,6 +55,6 @@ export default withStore({
         // hasClear
       />
       <div className={S.buttons}>{buttons}</div>
-    </form>
+    </div>
   );
 });

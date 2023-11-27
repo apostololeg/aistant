@@ -14,6 +14,14 @@ export enum NodeType {
   Group,
 }
 
+export const NODE_TYPES = {
+  Text: 'Text',
+  Table: 'Table',
+  Function: 'Function',
+  View: 'View',
+  Group: 'Group',
+};
+
 export type Node = {
   id: number;
   createdAt: string;

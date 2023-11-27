@@ -1,6 +1,7 @@
-import { useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { withStore } from 'justorm/react';
 import { Select } from '@homecode/ui';
+import Time from 'timen';
 
 import { updateProps } from '../../helpers';
 import S from './Tag.styl';
@@ -28,6 +29,13 @@ export const Tag = withStore({ nodes: ['nodes'] })(function Tag({
     return [...nodesOptions, ...actionsOptions];
   }, [nodes]);
 
+  // const onSelectRef = useCallback(select => {
+  //   const input = select?.triggerInputRef.current.inputRef.current;
+  //   console.log('onSelectRef', select, input);
+
+  //   Time.after(300, () => input?.focus());
+  // }, []);
+
   const onChange = (nodeId: any) => {
     console.log('onChange', nodeId);
 
@@ -39,16 +47,27 @@ export const Tag = withStore({ nodes: ['nodes'] })(function Tag({
     updateProps(ref.current.rootElem.current, { nodeId });
   };
 
+  // useEffect(() => {
+  //   // @ts-ignore
+  //   editor?.selection?.getRange()[1].native?.collapse();
+  // }, []);
+
   return (
     <Select
+      // ref={onSelectRef}
       className={S.root}
       size="s"
       isSearchable
       options={allNodesOptoins}
       value={nodeId}
       onChange={onChange}
-      popupProps={{ ref }}
-      inputProps={{ placeholder: 'type node name...' }}
+      popupProps={{ ref, direction: 'top' }}
+      inputProps={{
+        type: 'textarea',
+        placeholder: 'type node name...',
+        className: S.input,
+        controlProps: { autoFocus: true },
+      }}
       required
       hideRequiredStar
     />
