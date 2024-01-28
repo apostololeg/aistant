@@ -52,11 +52,14 @@ const STORE = createStore('nodes', {
   updateNode(id, dto) {
     const socket = ws.getSocket();
 
-    socket.emit('update_node', { id, ...dto });
-    socket.once('update_node', node => {
-      // node updated, update it in the list
-      Object.assign(this.byId[node.id], node);
-      this.saveToLS();
+    return new Promise(resolve => {
+      socket.emit('update_node', { id, ...dto });
+      socket.once('update_node', node => {
+        // node updated, update it in the list
+        Object.assign(this.byId[node.id], node);
+        resolve(this.byId[node.id]);
+        this.saveToLS();
+      });
     });
   },
 
@@ -70,6 +73,17 @@ const STORE = createStore('nodes', {
     delete this.byId[node.id];
 
     this.saveToLS();
+  },
+
+  runNode(id) {
+    const socket = ws.getSocket();
+
+    socket.emit('run_node', { id });
+    socket.once('run_node', node => {
+      // node updated, update it in the list
+      Object.assign(this.byId[node.id], node);
+      this.saveToLS();
+    });
   },
 });
 

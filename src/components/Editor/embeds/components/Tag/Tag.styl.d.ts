@@ -2,6 +2,7 @@
 // Please do not change this file!
 interface CssExports {
   'input': string;
+  'option': string;
   'root': string;
 }
 export const cssExports: CssExports;

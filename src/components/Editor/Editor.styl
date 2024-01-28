@@ -4,10 +4,18 @@
   flex-grow 1
   flex-direction column
   overflow hidden
-  margin-bottom var(--indent-m)
+
+  // mimic to <Input/> :
+  border-radius 6px
+  padding-top 10px
+  // margin-bottom var(--indent-m)
   // margin 20px 0
   // border 1px solid var(--accent-color-alpha-50)
   // border-radius 6px
+  transition background-color .1s ease-out
+
+  &:hover
+    background-color var(--active-color-alpha-100)
 
 .fullscreen
   z-index 10

@@ -18,7 +18,7 @@ import {
 } from './Editor.helpers';
 import PostRenderHelpers from './PostRenderHelpers';
 
-const Parchment = Quill.import('parchment');
+// const Parchment = Quill.import('parchment');
 
 type Props = {
   className?: string;
@@ -149,7 +149,7 @@ export default class Editor extends Component<Props> {
     return (
       <div className={cn(S.root, isFullscreen && S.fullscreen)}>
         <PostRenderHelpers />
-        {showToolbar && (
+        {/* {showToolbar && (
           <Toolbar
             className={S.toolbar}
             editor={this.editor}
@@ -163,9 +163,9 @@ export default class Editor extends Component<Props> {
               onClick={this.toggleFullscreen}
             >
               <Icon type="fullscreen" size="l" />
-            </Button> */}
+            </Button>}
           </Toolbar>
-        )}
+        )*/}
         <Scroll y>
           <div id="editor" className={S.editor} />
         </Scroll>

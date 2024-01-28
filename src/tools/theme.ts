@@ -5,7 +5,7 @@ const { colors, getColors, getConfig } = ThemeDefaults;
 const defaultColors = getColors();
 const defaultConfig = getConfig();
 
-const activeColor = '#d05c0c';
+const activeColor = '#09c015';
 
 export const colorsConfig = {
   light: {

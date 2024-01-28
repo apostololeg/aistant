@@ -9,6 +9,7 @@ import S from './Tag.styl';
 type Props = {
   nodeId?: string;
   store?: any;
+  inputProps?: any;
 };
 
 const ACTIONS = {
@@ -18,6 +19,9 @@ const ACTIONS = {
 export const Tag = withStore({ nodes: ['nodes'] })(function Tag({
   nodeId,
   store,
+  inputProps,
+  onChange,
+  ...props
 }: Props) {
   const nodes = [...store.nodes.items.originalObject];
   const ref = useRef(null);
@@ -36,8 +40,8 @@ export const Tag = withStore({ nodes: ['nodes'] })(function Tag({
   //   Time.after(300, () => input?.focus());
   // }, []);
 
-  const onChange = (nodeId: any) => {
-    console.log('onChange', nodeId);
+  const handleChange = (nodeId: any) => {
+    console.log('handleCHange', nodeId);
 
     if (nodeId === ACTIONS.NEW_NODE) {
       store.nodes.createNode({ name: nodeId });
@@ -45,6 +49,7 @@ export const Tag = withStore({ nodes: ['nodes'] })(function Tag({
     }
 
     updateProps(ref.current.rootElem.current, { nodeId });
+    onChange?.();
   };
 
   // useEffect(() => {
@@ -59,17 +64,20 @@ export const Tag = withStore({ nodes: ['nodes'] })(function Tag({
       size="s"
       isSearchable
       options={allNodesOptoins}
+      optionClassName={S.option}
       value={nodeId}
-      onChange={onChange}
+      onChange={handleChange}
       popupProps={{ ref, direction: 'top' }}
       inputProps={{
         type: 'textarea',
         placeholder: 'type node name...',
         className: S.input,
         controlProps: { autoFocus: true },
+        ...inputProps,
       }}
       required
       hideRequiredStar
+      {...props}
     />
   );
 });

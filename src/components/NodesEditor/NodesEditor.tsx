@@ -7,10 +7,14 @@ import { Button, Icon } from '@homecode/ui';
 
 import S from './NodesEditor.styl';
 
+type Props = {
+  store?: any;
+};
+
 @withStore({ nodes: 'items' })
-export default class NodesEditor extends Component {
+export default class NodesEditor extends Component<Props> {
   store = null;
-  innerRef = React.createRef();
+  innerRef = React.createRef<HTMLDivElement>();
 
   constructor(props) {
     super(props);
@@ -42,6 +46,7 @@ export default class NodesEditor extends Component {
   setTransform() {
     const { translateX, translateY, translateZ } = this.store;
 
+    // @ts-ignore
     this.innerRef.current.style.transform = `translate3d(${translateX}px, ${translateY}px, ${translateZ}px)`;
   }
 
@@ -53,6 +58,11 @@ export default class NodesEditor extends Component {
 
   onPointerDown = e => {
     console.log('pointer down');
+
+    const isInInput = e.target.closest('input, textarea, [contenteditable]');
+
+    if (isInInput) return;
+
     this.store.isDragging = true;
   };
 
@@ -62,10 +72,6 @@ export default class NodesEditor extends Component {
     const { isDragging } = this.store;
 
     if (isDragging) {
-      const isInInput = e.target.closest('input, textarea, [contenteditable]');
-
-      if (isInInput) return;
-
       console.log('dragging', e.movementX, e.movementY);
 
       this.store.translateX += e.movementX;
@@ -97,6 +103,7 @@ export default class NodesEditor extends Component {
   };
 
   onWheel = e => {
+    // TODO: settings.zoomKey
     if (!e.ctrlKey) return;
 
     e.preventDefault();
@@ -128,14 +135,7 @@ export default class NodesEditor extends Component {
 
     return (
       <div className={cn(S.root, isDragging && S.isDragging)}>
-        <div
-          className={S.inner}
-          ref={this.innerRef}
-          onClick={this.onBgClick}
-          // style={{
-          //   transform: `translate3d(${translateX}px, ${translateY}px, ${translateZ}px)`,
-          // }}
-        >
+        <div className={S.inner} ref={this.innerRef} onClick={this.onBgClick}>
           {items.map(({ id }) => (
             <NodeForm key={id} id={id} className={S.item} />
           ))}

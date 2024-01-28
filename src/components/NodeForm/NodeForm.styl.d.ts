@@ -5,14 +5,17 @@ interface CssExports {
   'data': string;
   'editButton': string;
   'editor': string;
+  'footer': string;
   'header': string;
   'isDragging': string;
+  'link': string;
   'name': string;
   'outputButton': string;
   'preview': string;
   'pulseShadow': string;
-  'repeat': string;
   'root': string;
+  'runButton': string;
+  'submitButtons': string;
   'type': string;
   'type-function': string;
   'type-table': string;

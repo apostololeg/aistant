@@ -56,8 +56,8 @@ export default createStore('dialogue', {
       );
 
       ws.socket.on('prompt', (data: any) => {
-        // const { role, content } = JSON.parse(data);
-        // this.addMessage(role as Role, content, Date.now() - startedAt);
+        const { role, content } = JSON.parse(data);
+        this.addMessage(role as Role, content, Date.now() - startedAt);
       });
 
       // // const response = await fetch(`${BAKCEND_DOMAIN}/api/core/completition`, {
